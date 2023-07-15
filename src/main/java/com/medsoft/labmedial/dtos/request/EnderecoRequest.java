@@ -1,4 +1,4 @@
-package com.medsoft.labmedial.records.request;
+package com.medsoft.labmedial.dtos.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,13 +17,13 @@ public record EnderecoRequest(
         String logradouro,
 
         @NotNull(message = "O preenchimento do número da residência do paciente é obrigatório!")
-        Integer numero,
+        String numero,
 
         String complemento,
 
         @NotBlank(message = "O preenchimento do bairro de residência do paciente é obrigatório!")
         String bairro,
 
-        String pontoDeReferencia
+        String referencia
 ) {
 }

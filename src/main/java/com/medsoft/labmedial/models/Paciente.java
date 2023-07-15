@@ -1,7 +1,12 @@
 package com.medsoft.labmedial.models;
 
+import com.medsoft.labmedial.dtos.request.PacienteRequest;
+import com.medsoft.labmedial.enums.EstadoCivil;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
 import java.time.LocalDate;
@@ -9,48 +14,83 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "PACIENTE")
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Paciente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
     private Long id;
-    @Column(name = "TIPO_DE_USUARIO_ID")
-    private Long tipoDeUsuarioId;
-    @Column(name = "NOME_COMPLETO")
-    private String nomeCompleto;
+
+    @Column(name = "NOME")
+    private String nome;
+
+    @Column(name = "GENERO")
     private String genero;
-    @Column(name = "DATA_DE_NASCIMENTO")
-    private LocalDate dataDeNascimento;
+
+    @Column(name = "DTANASCIMENTO")
+    private LocalDate dtaNascimento;
+
+    @Column(name = "CPF", updatable = false)
     private String cpf;
+
+    @Column(name = "RG", updatable = false)
     private String rg;
-    @Column(name = "ESTADO_CIVIL")
-    private String estadoCivil;
+
+    @Column(name = "ESTADOCIVIL")
+    @Enumerated(EnumType.STRING)
+    private EstadoCivil estadoCivil;
+
+    @Column(name = "TELEFONE")
     private String telefone;
+
+    @Column(name = "EMAIL")
     private String email;
+
+    @Column(name = "NATURALIDADE")
     private String naturalidade;
-    @Column(name = "CONTATO_DE_EMERGENCIA")
-    private String contatoDeEmergencia;
-    @Column(name = "LISTA_DE_ALERGIAS")
-    private String listaDeAlergias;
-    @Column(name = "LISTA_DE_CUIDADOS_ESPECIFICOS")
-    private String listaDeCuidadosEspecificos;
+
+    @Column(name = "TELEMERGENCIA")
+    private String telEmergencia;
+
+    @Column(name = "CONVENIO")
     private String convenio;
-    @Column(name = "NUMERO_DO_CONVENIO")
-    private String numeroDoConvenio;
-    @Column(name = "VALIDADE_DO_CONVENIO")
-    private LocalDate validadeDoConvenio;
+
+    @Column(name = "NROCONVENIO")
+    private String nroConvenio;
+
+    @Column(name = "VALCONVENIO")
+    private LocalDate validadeConvenio;
+
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumns({
-            @JoinColumn(name = "cep", referencedColumnName = "cep"),
-            @JoinColumn(name = "cidade", referencedColumnName = "cidade"),
-            @JoinColumn(name = "estado", referencedColumnName = "estado"),
-            @JoinColumn(name = "logradouro", referencedColumnName = "logradouro"),
-            @JoinColumn(name = "numero", referencedColumnName = "numero"),
-            @JoinColumn(name = "complemento", referencedColumnName = "complemento"),
-            @JoinColumn(name = "bairro", referencedColumnName = "bairro"),
-            @JoinColumn(name = "pontoDeReferencia", referencedColumnName = "PONTO_DE_REFERENCIA"),
-    })
-    private Endereco endereco;
-    @ReadOnlyProperty
-    @Column(name = "STATUS_DO_SISTEMA")
-    private Boolean statusDoSistema = true;
+    @JoinColumn(name = "IDENDERECO")
+    private Endereco endereco = new Endereco();
+
+    public Paciente(PacienteRequest pacienteRequest){
+
+        this.nome = pacienteRequest.nome();
+        this.genero = pacienteRequest.genero();
+        this.dtaNascimento = pacienteRequest.dtaNascimento();
+        this.cpf = pacienteRequest.cpf();
+        this.rg = pacienteRequest.rg();
+        this.estadoCivil = pacienteRequest.estadoCivil();
+        this.telefone = pacienteRequest.telefone();
+        this.email = pacienteRequest.email();
+        this.naturalidade = pacienteRequest.naturalidade();
+        this.telEmergencia = pacienteRequest.telEmergencia();
+        this.convenio = pacienteRequest.convenio();
+        this.nroConvenio = pacienteRequest.nroConvenio();
+        this.validadeConvenio = pacienteRequest.validadeConvenio();
+
+        this.endereco.setCep(pacienteRequest.cep());
+        this.endereco.setCidade(pacienteRequest.cidade());
+        this.endereco.setEstado(pacienteRequest.estado());
+        this.endereco.setLogradouro(pacienteRequest.logradouro());
+        this.endereco.setNumero(pacienteRequest.numero());
+        this.endereco.setComplemento(pacienteRequest.complemento());
+        this.endereco.setBairro(pacienteRequest.bairro());
+        this.endereco.setReferencia(pacienteRequest.referencia());
+
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.medsoft.labmedial.records.response;
+package com.medsoft.labmedial.dtos.response;
 
 import org.springframework.validation.FieldError;
 

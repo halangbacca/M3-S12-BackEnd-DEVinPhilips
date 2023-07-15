@@ -1,6 +1,6 @@
 package com.medsoft.labmedial.exceptions;
 
-import com.medsoft.labmedial.records.response.ExceptionsResponse;
+import com.medsoft.labmedial.dtos.response.ExceptionsResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
