@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.ReadOnlyProperty;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
 @Table(name = "PACIENTE")
@@ -66,6 +68,14 @@ public class Paciente {
     @JoinColumn(name = "IDENDERECO")
     private Endereco endereco = new Endereco();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "IDPACIENTE")
+    private Collection<Alergia> alergias = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "IDPACIENTE")
+    private Collection<Precaucao> precaucoes = new ArrayList<>();;
+
     public Paciente(PacienteRequest pacienteRequest){
 
         this.nome = pacienteRequest.nome();
@@ -90,6 +100,10 @@ public class Paciente {
         this.endereco.setComplemento(pacienteRequest.complemento());
         this.endereco.setBairro(pacienteRequest.bairro());
         this.endereco.setReferencia(pacienteRequest.referencia());
+
+        this.alergias.addAll(pacienteRequest.alergias());
+        this.precaucoes.addAll(pacienteRequest.precaucoes());
+
 
     }
 
