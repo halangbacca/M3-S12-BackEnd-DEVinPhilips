@@ -2,10 +2,8 @@ package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.PacienteRequest;
 import com.medsoft.labmedial.dtos.response.PacienteResponse;
-import com.medsoft.labmedial.mapper.PacienteMapper;
 import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.services.PacienteService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/pacientes")
@@ -36,7 +33,7 @@ public class PacienteController {
 
         List<PacienteResponse> pacienteResponse = service.listarPacientes()
                 .stream()
-                .map(PacienteMapper.INSTANCE::pacienteToResponse).toList();
+                .map(paciente -> new PacienteResponse(paciente)).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pacienteResponse);

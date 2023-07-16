@@ -4,10 +4,8 @@ import com.medsoft.labmedial.dtos.request.PacienteRequest;
 import com.medsoft.labmedial.enums.EstadoCivil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.ReadOnlyProperty;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -70,11 +68,11 @@ public class Paciente {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "IDPACIENTE")
-    private Collection<Alergia> alergias = new ArrayList<>();
+        private Collection<Alergia> alergias = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "IDPACIENTE")
-    private Collection<Precaucao> precaucoes = new ArrayList<>();;
+    private Collection<Precaucao> precaucoes = new ArrayList<>();
 
     public Paciente(PacienteRequest pacienteRequest){
 
@@ -101,8 +99,13 @@ public class Paciente {
         this.endereco.setBairro(pacienteRequest.bairro());
         this.endereco.setReferencia(pacienteRequest.referencia());
 
-        this.alergias.addAll(pacienteRequest.alergias());
-        this.precaucoes.addAll(pacienteRequest.precaucoes());
+        if(pacienteRequest.alergias() != null){
+            this.alergias.addAll(pacienteRequest.alergias());
+        }
+
+        if(pacienteRequest.alergias() != null){
+            this.precaucoes.addAll(pacienteRequest.precaucoes());
+        }
 
 
     }

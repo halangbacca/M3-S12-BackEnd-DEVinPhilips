@@ -4,9 +4,7 @@ import com.medsoft.labmedial.exceptions.PacienteConflictExeception;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.repositories.PacienteRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,18 +61,6 @@ public class PacienteService {
             return novoPaciente;
         }
         throw new PacienteNotFoundExeception("Paciente não encontrado!");
-
-//        return  Optional.ofNullable(
-//                        this.repository.findById(id)
-//                                .map(paciente -> {
-//
-//                                    request.setId(id);
-//                                    Paciente novoPaciente = this.repository.save(request);
-//                                    return novoPaciente;
-//
-//                                })
-//                                .orElseThrow(() -> new PacienteNotFoundExeception("Paciente não encontrado!"))
-//        ).get();
 
     }
 
