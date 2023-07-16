@@ -59,4 +59,17 @@ public class PacienteController {
         }
         return null;
     }
+
+    @PutMapping("/atualizar/{id}")
+    public ResponseEntity<PacienteResponse> atualizarPaciente(@PathVariable Long id,
+                                                              @Valid @RequestBody PacienteRequest request ){
+
+        Paciente paciente = new Paciente(request);
+
+        PacienteResponse novoPaciente = new PacienteResponse(service.atualizarPaciente(id, paciente));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(novoPaciente);
+
+    }
 }

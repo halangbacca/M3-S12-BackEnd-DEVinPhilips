@@ -55,4 +55,27 @@ public class PacienteService {
         return false;
     }
 
+    public Paciente atualizarPaciente(Long id, Paciente request){
+
+        if(this.repository.existsById(id)){
+            request.setId(id);
+            Paciente novoPaciente = this.repository.save(request);
+            return novoPaciente;
+        }
+        throw new PacienteNotFoundExeception("Paciente não encontrado!");
+
+//        return  Optional.ofNullable(
+//                        this.repository.findById(id)
+//                                .map(paciente -> {
+//
+//                                    request.setId(id);
+//                                    Paciente novoPaciente = this.repository.save(request);
+//                                    return novoPaciente;
+//
+//                                })
+//                                .orElseThrow(() -> new PacienteNotFoundExeception("Paciente não encontrado!"))
+//        ).get();
+
+    }
+
 }
