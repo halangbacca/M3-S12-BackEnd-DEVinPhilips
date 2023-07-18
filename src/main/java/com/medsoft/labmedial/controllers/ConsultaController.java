@@ -71,7 +71,7 @@ public class ConsultaController {
     }
 
     @PutMapping("/atualizar/{id}")
-    public ResponseEntity<ConsultaResponse> atualizarPaciente(@PathVariable Long id,
+    public ResponseEntity<ConsultaResponse> atualizarConsulta(@PathVariable Long id,
                                                               @Valid @RequestBody ConsultaRequest request ){
 
         Consulta consulta = ConsultaMapper.INSTANCE.requestToConsulta(request);
