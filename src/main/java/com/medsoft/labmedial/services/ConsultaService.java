@@ -1,6 +1,6 @@
 package com.medsoft.labmedial.services;
 
-import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
+import com.medsoft.labmedial.exceptions.ConsultaNotFoundExeception;
 import com.medsoft.labmedial.models.Consulta;
 import com.medsoft.labmedial.repositories.ConsultaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,8 @@ public class ConsultaService {
 
     public Consulta cadastrarConsulta(Consulta request) {
 
+        request.setSituacao(true);
+
         return repository.save(request);
 
     }
@@ -29,7 +31,7 @@ public class ConsultaService {
     public Consulta buscarPorId(Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() -> new PacienteNotFoundExeception("Consulta não encontrado!"));
+                .orElseThrow(() -> new ConsultaNotFoundExeception("Consulta não encontrado!"));
 
     }
 
@@ -40,7 +42,7 @@ public class ConsultaService {
                     repository.deleteById(id);
                     return true;
                 })
-                .orElseThrow(() -> new PacienteNotFoundExeception("Consulta não encontrado!"));
+                .orElseThrow(() -> new ConsultaNotFoundExeception("Consulta não encontrado!"));
 
         return false;
     }
@@ -51,7 +53,7 @@ public class ConsultaService {
             request.setId(id);
             return this.repository.save(request);
         }
-        throw new PacienteNotFoundExeception("Paciente não encontrado!");
+        throw new ConsultaNotFoundExeception("Consulta não encontrado!");
 
     }
 

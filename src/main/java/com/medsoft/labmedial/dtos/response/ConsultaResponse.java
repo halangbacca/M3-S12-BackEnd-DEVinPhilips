@@ -1,6 +1,6 @@
 package com.medsoft.labmedial.dtos.response;
 
-import com.medsoft.labmedial.models.Paciente;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
@@ -8,8 +8,11 @@ public record ConsultaResponse(
 
         Long id,
 
+        NomePaciente paciente,
+
         String motivo,
 
+        @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
         Date dtaConsulta,
 
         String problema,
@@ -18,7 +21,7 @@ public record ConsultaResponse(
 
         String precausao,
 
-        Paciente paciente
+        Boolean situacao
 
 ) {
 }

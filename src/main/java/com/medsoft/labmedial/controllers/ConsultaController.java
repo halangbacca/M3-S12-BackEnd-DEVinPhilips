@@ -2,7 +2,7 @@ package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.ConsultaRequest;
 import com.medsoft.labmedial.dtos.response.ConsultaResponse;
-import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
+import com.medsoft.labmedial.exceptions.ConsultaNotFoundExeception;
 import com.medsoft.labmedial.mapper.ConsultaMapper;
 import com.medsoft.labmedial.models.Consulta;
 import com.medsoft.labmedial.models.Paciente;
@@ -39,7 +39,7 @@ public class ConsultaController {
                     .body(ConsultaMapper.INSTANCE.consultaToResponse(newConsulta));
         }
 
-        throw new PacienteNotFoundExeception("Paciente não cadastrado");
+        throw new ConsultaNotFoundExeception("Consulta não cadastrada!");
 
     }
 
@@ -85,7 +85,7 @@ public class ConsultaController {
                     .body(ConsultaMapper.INSTANCE.consultaToResponse(newConsulta));
         }
 
-        throw new PacienteNotFoundExeception("Paciente não cadastrado");
+        throw new ConsultaNotFoundExeception("Consulta não cadastrado");
 
     }
 
