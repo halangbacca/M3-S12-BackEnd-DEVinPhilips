@@ -41,6 +41,6 @@ public class Consulta {
     private Paciente paciente;
 
     @Column(name = "SITUACAO")
-    Boolean situacao;
+    private Boolean situacao;
 
 }
