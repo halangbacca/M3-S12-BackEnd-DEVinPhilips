@@ -40,4 +40,7 @@ public class Consulta {
     @JoinColumn(name = "IDPACIENTE")
     private Paciente paciente;
 
+    @Column(name = "SITUACAO")
+    Boolean situacao;
+
 }
