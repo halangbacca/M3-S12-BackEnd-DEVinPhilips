@@ -34,7 +34,7 @@ public class Consulta {
     private String medicacao;
 
     @Column(name = "PRECAUCAO")
-    private String precausao;
+    private String precaucao;
 
     @ManyToOne()
     @JoinColumn(name = "IDPACIENTE")

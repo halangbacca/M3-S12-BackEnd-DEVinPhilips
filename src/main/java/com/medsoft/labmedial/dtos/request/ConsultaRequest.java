@@ -25,7 +25,7 @@ public record ConsultaRequest(
 
         @NotBlank(message = "O precaução da consulta é  obrigatório!")
         @Size(min = 16, max = 256)
-        String precausao,
+        String precaucao,
 
         Long idPaciente
 

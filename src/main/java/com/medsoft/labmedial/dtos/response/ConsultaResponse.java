@@ -19,7 +19,7 @@ public record ConsultaResponse(
 
         String medicacao,
 
-        String precausao,
+        String precaucao,
 
         Boolean situacao
 
