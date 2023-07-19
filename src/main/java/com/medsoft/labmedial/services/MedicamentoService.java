@@ -1,6 +1,6 @@
 package com.medsoft.labmedial.services;
 
-import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
+import com.medsoft.labmedial.exceptions.MedicamentoNotFoundExeception;
 import com.medsoft.labmedial.models.Medicamento;
 import com.medsoft.labmedial.repositories.MedicamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class MedicamentoService {
     public Medicamento buscarPorId(Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() -> new PacienteNotFoundExeception("Medicamento não encontrado!"));
+                .orElseThrow(() -> new MedicamentoNotFoundExeception("Medicamento não encontrado!"));
 
     }
 
@@ -40,7 +40,7 @@ public class MedicamentoService {
                     repository.deleteById(id);
                     return true;
                 })
-                .orElseThrow(() -> new PacienteNotFoundExeception("Exame não encontrado!"));
+                .orElseThrow(() -> new MedicamentoNotFoundExeception("Medicamento não encontrado!"));
 
         return false;
     }
@@ -51,7 +51,7 @@ public class MedicamentoService {
             request.setId(id);
             return this.repository.save(request);
         }
-        throw new PacienteNotFoundExeception("Medicamento não encontrado!");
+        throw new MedicamentoNotFoundExeception("Medicamento não encontrado!");
 
     }
 

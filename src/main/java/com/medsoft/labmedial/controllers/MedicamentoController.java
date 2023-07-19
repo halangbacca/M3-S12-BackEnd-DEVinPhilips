@@ -1,16 +1,13 @@
 package com.medsoft.labmedial.controllers;
 
-import com.medsoft.labmedial.dtos.request.ConsultaRequest;
 import com.medsoft.labmedial.dtos.request.MedicamentoRequest;
-import com.medsoft.labmedial.dtos.response.ConsultaResponse;
 import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
-import com.medsoft.labmedial.mapper.ConsultaMapper;
 import com.medsoft.labmedial.mapper.MedicamentoMapper;
-import com.medsoft.labmedial.models.Consulta;
 import com.medsoft.labmedial.models.Medicamento;
 import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.services.MedicamentoService;
+import com.medsoft.labmedial.services.PacienteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,14 +23,26 @@ public class MedicamentoController {
     @Autowired
     private MedicamentoService service;
 
+    @Autowired
+    private PacienteService servicePaciente;
+
     @PostMapping("/cadastrar")
     public ResponseEntity<MedicamentoResponse> cadastrarExame(@Valid @RequestBody MedicamentoRequest request) {
 
-        Medicamento novoMedicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
+        Medicamento medicedicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
+
+        if(paciente != null){
+            medicedicamento.setPaciente(paciente);
+            Medicamento novoMedicamento = service.cadastrarMedicamento(medicedicamento);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
                     .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(novoMedicamento));
         }
+
+        throw new PacienteNotFoundExeception("Paciente não cadastrada!");
+    }
 
 
     @GetMapping("/listar")
@@ -67,12 +76,20 @@ public class MedicamentoController {
     public ResponseEntity<MedicamentoResponse> atualizarmedicamento(@PathVariable Long id,
                                                               @Valid @RequestBody MedicamentoRequest request ){
 
-        Medicamento medicamento = MedicamentoMapper.INSTANCE.requestToMedicamento(request);
-        Medicamento novoMedicamento = service.atualizarMedicamento(id,medicamento);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(novoMedicamento));
+        Medicamento medicedicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
 
+        Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
+
+        if(paciente != null){
+            medicedicamento.setPaciente(paciente);
+            Medicamento novoMedicamento = service.atualizarMedicamento(id, medicedicamento);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(novoMedicamento));
+        }
+
+        throw new PacienteNotFoundExeception("Paciente não cadastrado!");
     }
 
 }

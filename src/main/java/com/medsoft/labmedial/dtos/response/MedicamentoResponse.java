@@ -8,6 +8,8 @@ public record MedicamentoResponse(
 
         Long id,
 
+        NomePaciente paciente,
+
         String descricao,
 
         @JsonFormat(pattern = "dd/MM/yyyy")
@@ -17,7 +19,9 @@ public record MedicamentoResponse(
 
         String unidade,
 
-        String observacao
+        String observacao,
+
+        Boolean situacao
 
 ) {
 }

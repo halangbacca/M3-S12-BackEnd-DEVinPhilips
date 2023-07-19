@@ -35,4 +35,11 @@ public class Medicamento {
     @Column(name = "OBSERVACAO")
     private String observacao;
 
+    @ManyToOne()
+    @JoinColumn(name = "IDPACIENTE")
+    private Paciente paciente;
+
+    @Column(name = "SITUACAO")
+    private Boolean situacao;
+
 }
