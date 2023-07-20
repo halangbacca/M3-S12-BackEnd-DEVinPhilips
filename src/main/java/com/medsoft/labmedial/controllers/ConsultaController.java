@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/consultas")
+@CrossOrigin
 public class ConsultaController {
 
     @Autowired
@@ -25,7 +26,7 @@ public class ConsultaController {
     @Autowired
     private PacienteService servicePaciente;
 
-    @PostMapping("/cadastrar")
+    @PostMapping()
     public ResponseEntity<ConsultaResponse> cadastrarExame(@Valid @RequestBody ConsultaRequest request) {
 
         Consulta consulta = ConsultaMapper.INSTANCE.requestToConsulta(request);
@@ -43,7 +44,7 @@ public class ConsultaController {
 
     }
 
-    @GetMapping("/listar")
+    @GetMapping()
     public ResponseEntity<List<ConsultaResponse>> listarConsulta() {
 
         List<ConsultaResponse> consultaResponses = service.listarConsultas()
@@ -61,7 +62,7 @@ public class ConsultaController {
                 .body(ConsultaMapper.INSTANCE.consultaToResponse(service.buscarPorId(id)));
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
         if(service.deletarPorId(id)){
@@ -70,7 +71,7 @@ public class ConsultaController {
         return null;
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ConsultaResponse> atualizarConsulta(@PathVariable Long id,
                                                               @Valid @RequestBody ConsultaRequest request ){
 
