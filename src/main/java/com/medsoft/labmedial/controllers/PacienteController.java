@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pacientes")
+@RequestMapping("api/pacientes")
+@CrossOrigin
 public class PacienteController {
     @Autowired
     private PacienteService service;
 
-    @PostMapping("/cadastrar")
+    @PostMapping()
     public ResponseEntity<PacienteResponse> cadastrarPaciente( @Valid @RequestBody PacienteRequest request) {
         Paciente paciente = new Paciente(request);
 
@@ -28,7 +29,7 @@ public class PacienteController {
                 .body(novoPaciente);
     }
 
-    @GetMapping("/listar")
+    @GetMapping()
     public ResponseEntity<List<PacienteResponse>> listarPacientes() {
 
         List<PacienteResponse> pacienteResponse = service.listarPacientes()
@@ -48,7 +49,7 @@ public class PacienteController {
                 .body(pacienteResponse);
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
         if(service.deletarPorId(id)){
@@ -57,7 +58,7 @@ public class PacienteController {
         return null;
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PacienteResponse> atualizarPaciente(@PathVariable Long id,
                                                               @Valid @RequestBody PacienteRequest request ){
 
