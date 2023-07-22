@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/medicamentos")
+@CrossOrigin
 public class MedicamentoController {
 
     @Autowired
@@ -26,7 +27,7 @@ public class MedicamentoController {
     @Autowired
     private PacienteService servicePaciente;
 
-    @PostMapping("/cadastrar")
+    @PostMapping()
     public ResponseEntity<MedicamentoResponse> cadastrarExame(@Valid @RequestBody MedicamentoRequest request) {
 
         Medicamento medicedicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
@@ -45,7 +46,7 @@ public class MedicamentoController {
     }
 
 
-    @GetMapping("/listar")
+    @GetMapping("")
     public ResponseEntity<List<MedicamentoResponse>> listarMedicamento() {
 
         List<MedicamentoResponse> medicamentoResponses = service.listarMedicamentos()
@@ -63,7 +64,7 @@ public class MedicamentoController {
                 .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(service.buscarPorId(id)));
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
         if(service.deletarPorId(id)){
@@ -72,7 +73,7 @@ public class MedicamentoController {
         return null;
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<MedicamentoResponse> atualizarmedicamento(@PathVariable Long id,
                                                               @Valid @RequestBody MedicamentoRequest request ){
 

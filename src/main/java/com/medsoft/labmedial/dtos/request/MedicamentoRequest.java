@@ -23,7 +23,10 @@ public record MedicamentoRequest(
         @NotBlank(message = "O unidade do medicamento é obrigatório!")
         String unidade,
 
-        @NotBlank(message = "O resultado do exame  obrigatório!")
+        @NotNull(message = "O quantidade do medicamento é obrigatório!")
+        Long quantidade,
+
+        @NotBlank(message = "O observação do medicamento é  obrigatório!")
         @Size(min = 10, max = 1000)
         String observacao,
 

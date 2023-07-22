@@ -32,6 +32,9 @@ public class Medicamento {
     @Column(name = "UNIDADE")
     private String unidade;
 
+    @Column(name = "QUANTIDADE")
+    private Long quantidade;
+
     @Column(name = "OBSERVACAO")
     private String observacao;
 
