@@ -13,7 +13,7 @@ public record MedicamentoRequest(
         @Size(min = 5, max = 100)
         String descricao,
 
-        @NotNull(message = "A data do medicamento é Obrigatório")
+        @NotNull(message = "A data do medicamento é obrigatório")
         @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
         Date dtaMedicamento,
 

@@ -27,19 +27,19 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
-    @PostMapping("/cadastrar")
+    @PostMapping()
     public ResponseEntity<UsuarioResponse> cadastrarUsuario(@Valid @RequestBody UsuarioRequest request) {
         Usuario usuario = UsuarioMapper.INSTANCE.requestToUsuario(request);
 
 
-            Usuario novoUsuario = service.cadastrarUsuario(usuario);
+        Usuario novoUsuario = service.cadastrarUsuario(usuario);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(UsuarioMapper.INSTANCE.usuarioToResponse(novoUsuario));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(UsuarioMapper.INSTANCE.usuarioToResponse(novoUsuario));
 
     }
 
-    @GetMapping("/listar")
+    @GetMapping()
     public ResponseEntity<List<UsuarioResponse>> listarUsuarios() {
 
         List<UsuarioResponse> usuarioResponses = service.listarUsuarios()
@@ -57,18 +57,18 @@ public class UsuarioController {
                 .body(UsuarioMapper.INSTANCE.usuarioToResponse(service.buscarPorId(id)));
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
-        if(service.deletarPorId(id)){
+        if (service.deletarPorId(id)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> atualizarUsuario(@PathVariable Long id,
-                                                              @Valid @RequestBody UsuarioRequest request ){
+                                                            @Valid @RequestBody UsuarioRequest request) {
 
         Usuario novoUsuario = service.atualizarUsuario(id, UsuarioMapper.INSTANCE.requestToUsuario(request));
 

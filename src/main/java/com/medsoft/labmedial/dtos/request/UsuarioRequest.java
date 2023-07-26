@@ -16,25 +16,25 @@ import java.util.Collection;
 
 public record UsuarioRequest(
 
-        @NotBlank(message = "O preenchimento do nome do usuario é obrigatório!")
+        @NotBlank(message = "O preenchimento do nome do usuário é obrigatório!")
         @Size(min = 8, max = 64)
         String nome,
 
-        @NotBlank(message = "O preenchimeto do gênero do usuario é obrigatório!")
+        @NotBlank(message = "O preenchimeto do gênero do usuário é obrigatório!")
         String genero,
 
-        @NotBlank(message = "O preenchimento do CPF do usuario é obrigatório!")
+        @NotBlank(message = "O preenchimento do CPF do usuário é obrigatório!")
         @CPF(message = "Formato de CPF inválido!")
         String cpf,
 
-        @NotBlank(message = "O preenchimento do telefone do usuario é obrigatório!")
+        @NotBlank(message = "O preenchimento do telefone do usuário é obrigatório!")
         String telefone,
 
-        @NotBlank(message = "O preenchimento do e-mail do usuario é obrigatório!")
+        @NotBlank(message = "O preenchimento do e-mail do usuário é obrigatório!")
         @Email(message = "Formato de e-mail inválido!")
         String email,
 
-        @NotBlank(message = "O preenchimento da senha do usuario é obrigatória!")
+        @NotBlank(message = "O preenchimento da senha do usuário é obrigatória!")
         String senha,
 
         //@NotBlank(message = "O nivel do usuário é obrigatório!")

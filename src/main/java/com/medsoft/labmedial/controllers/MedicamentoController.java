@@ -46,7 +46,7 @@ public class MedicamentoController {
     }
 
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<List<MedicamentoResponse>> listarMedicamento() {
 
         List<MedicamentoResponse> medicamentoResponses = service.listarMedicamentos()

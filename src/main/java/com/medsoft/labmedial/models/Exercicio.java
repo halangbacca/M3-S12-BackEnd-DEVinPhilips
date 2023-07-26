@@ -16,33 +16,32 @@ import java.util.Date;
 @Setter
 public class Exercicio {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "ID")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Long id;
 
-  @Column(name = "NOMEEXERCICIO")
-  private String nomeExercicio;
+    @Column(name = "NOMEEXERCICIO")
+    private String nomeExercicio;
 
-  @Column(name = "DTAEXERCICIO")
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-  private Date dtaExercicio;
+    @Column(name = "DTAEXERCICIO")
+    private Date dtaExercicio;
 
-  @Column(name = "TIPOEXERCICIO")
-  @Enumerated(EnumType.STRING)
-  private TipoExercicio tipoExercicio;
+    @Column(name = "TIPOEXERCICIO")
+    @Enumerated(EnumType.STRING)
+    private TipoExercicio tipoExercicio;
 
-  @Column(name = "QTDSEMANA")
-  private Integer qtdSemana;
+    @Column(name = "QTDSEMANA")
+    private Integer qtdSemana;
 
-  @Column(name = "DESCRICAO")
-  private String descricao;
+    @Column(name = "DESCRICAO")
+    private String descricao;
 
-  @ManyToOne
-  @JoinColumn(name = "IDPACIENTE")
-  private Paciente paciente;
+    @ManyToOne
+    @JoinColumn(name = "IDPACIENTE")
+    private Paciente paciente;
 
-  @Column(name = "SITUACAO")
-  private Boolean situacao;
+    @Column(name = "SITUACAO")
+    private Boolean situacao;
 
 }

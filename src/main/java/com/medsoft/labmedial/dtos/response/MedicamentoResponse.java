@@ -12,7 +12,6 @@ public record MedicamentoResponse(
 
         String descricao,
 
-        @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
         Date dtaMedicamento,
 
         String tipo,

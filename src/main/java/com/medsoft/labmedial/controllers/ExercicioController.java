@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "api/exercicios", produces = "application/json")
+@RequestMapping(value = "/api/exercicios", produces = "application/json")
 @CrossOrigin
 public class ExercicioController {
   private final ExercicioService service;

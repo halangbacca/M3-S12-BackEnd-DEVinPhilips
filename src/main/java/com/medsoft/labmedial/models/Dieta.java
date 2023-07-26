@@ -26,7 +26,6 @@ public class Dieta {
   private String nomeDieta;
 
   @Column(name = "DTADIETA")
-  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDate dtaDieta;
 
   @Column(name = "TIPODIETA")

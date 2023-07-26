@@ -25,7 +25,7 @@ public class ExameController {
     @Autowired
     private PacienteService servicePaciente;
 
-    @PostMapping("/cadastrar")
+    @PostMapping()
     public ResponseEntity<ExameResponse> cadastrarExame(@Valid @RequestBody ExameRequest request) {
 
         Exame exame = ExameMapper.INSTANCE.requestToExame(request);
@@ -43,7 +43,7 @@ public class ExameController {
 
     }
 
-    @GetMapping("/listar")
+    @GetMapping()
     public ResponseEntity<List<ExameResponse>> listarPacientes() {
 
         List<ExameResponse> exameResponses = service.listarExames()
@@ -61,7 +61,7 @@ public class ExameController {
                 .body(ExameMapper.INSTANCE.exameToResponse(service.buscarPorId(id)));
     }
 
-    @DeleteMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
         if(service.deletarPorId(id)){
@@ -70,7 +70,7 @@ public class ExameController {
         return null;
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ExameResponse> atualizarPaciente(@PathVariable Long id,
                                                               @Valid @RequestBody ExameRequest request ){
 
