@@ -39,7 +39,7 @@ public class DietaService {
       Dieta dieta = mapper.dietaRequestToDieta(request);
       dieta.setPaciente(paciente);
       dieta.setSituacao(true);
-      return mapper.dietaToDietaResonse(repository.save(dieta));
+      return mapper.dietaToDietaResponse(repository.save(dieta));
     } else {
       throw new PacienteNotFoundExeception("Paciente não encontrado.");
     }
@@ -50,7 +50,7 @@ public class DietaService {
       Dieta dieta = mapper.dietaRequestToDieta(request);
       dieta.setId(id);
       dieta.setSituacao(repository.findById(id).get().getSituacao());
-      return mapper.dietaToDietaResonse(repository.save(dieta));
+      return mapper.dietaToDietaResponse(repository.save(dieta));
     } else {
       throw new DietaNotFoundException("Dieta não encontrada.");
     }
@@ -69,15 +69,15 @@ public class DietaService {
 
     List<Optional<Dieta>> dietas = repository.findAllDietasByPacienteNome(nomePaciente);
 
-    if (nomePaciente.length() == 0) {
+    if (nomePaciente == null) {
       return repository.findAll()
               .stream()
-              .map(DietaMapper.INSTANCE::dietaToDietaResonse)
+              .map(DietaMapper.INSTANCE::dietaToDietaResponse)
               .collect(Collectors.toList());
     } else {
       return dietas.stream()
               .map(DietaMapper.INSTANCE::optionalDietaToDieta)
-              .map(DietaMapper.INSTANCE::dietaToDietaResonse)
+              .map(DietaMapper.INSTANCE::dietaToDietaResponse)
               .collect(Collectors.toList());
     }
   }

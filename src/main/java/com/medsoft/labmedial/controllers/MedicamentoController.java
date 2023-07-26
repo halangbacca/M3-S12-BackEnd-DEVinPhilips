@@ -1,6 +1,7 @@
 package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.MedicamentoRequest;
+import com.medsoft.labmedial.dtos.response.DietaResponse;
 import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.mapper.MedicamentoMapper;
@@ -39,7 +40,7 @@ public class MedicamentoController {
             Medicamento novoMedicamento = service.cadastrarMedicamento(medicedicamento);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(novoMedicamento));
+                    .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(novoMedicamento));
         }
 
         throw new PacienteNotFoundExeception("Paciente não cadastrada!");
@@ -47,12 +48,8 @@ public class MedicamentoController {
 
 
     @GetMapping()
-    public ResponseEntity<List<MedicamentoResponse>> listarMedicamento() {
-
-        List<MedicamentoResponse> medicamentoResponses = service.listarMedicamentos()
-                .stream()
-                .map((Medicamento medicamento) -> MedicamentoMapper.INSTANCE.medicamnetoToResponse(medicamento)).toList();
-
+    public ResponseEntity<List<MedicamentoResponse>> listarMedicamento(@RequestParam(required = false) String nomePaciente) {
+        List<MedicamentoResponse> medicamentoResponses = service.listarMedicamentosPorPaciente(nomePaciente);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(medicamentoResponses);
     }
@@ -61,7 +58,7 @@ public class MedicamentoController {
     public ResponseEntity<MedicamentoResponse> buscarPorId(@PathVariable Long id) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(service.buscarPorId(id)));
+                .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(service.buscarPorId(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -87,7 +84,7 @@ public class MedicamentoController {
             Medicamento novoMedicamento = service.atualizarMedicamento(id, medicedicamento);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(MedicamentoMapper.INSTANCE.medicamnetoToResponse(novoMedicamento));
+                    .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(novoMedicamento));
         }
 
         throw new PacienteNotFoundExeception("Paciente não cadastrado!");

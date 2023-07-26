@@ -13,7 +13,7 @@ public record DietaRequest(
         String nomeDieta,
 
         @NotNull(message = "A data da dieta é obrigatória")
-        @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
+        @JsonFormat(pattern = "dd-MM-yyyy")
         LocalDate dtaDieta,
 
         TipoDieta tipoDieta,

@@ -66,7 +66,7 @@ public class ExercicioService {
 
     List<Optional<Exercicio>> exercicios = repository.findAllExerciciosByPacienteNome(nomePaciente);
 
-    if (nomePaciente.length() == 0) {
+    if (nomePaciente == null) {
       return repository.findAll()
               .stream()
               .map(ExercicioMapper.INSTANCE::exercicioToExercicioResponse)

@@ -40,7 +40,7 @@ public class ExercicioController {
   }
 
   @GetMapping
-  public ResponseEntity<List<ExercicioResponse>> listarExercicios(@RequestParam String nomePaciente) {
+  public ResponseEntity<List<ExercicioResponse>> listarExercicios(@RequestParam(required = false) String nomePaciente) {
     List<ExercicioResponse> exercicioResponseList = service.listarExerciciosPorPaciente(nomePaciente);
     return ResponseEntity.status(HttpStatus.OK)
             .body(exercicioResponseList);

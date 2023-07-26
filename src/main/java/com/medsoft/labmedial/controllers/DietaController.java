@@ -40,7 +40,7 @@ public class DietaController {
   }
 
   @GetMapping
-  public ResponseEntity<List<DietaResponse>> listarDietas(@RequestParam String nomePaciente) {
+  public ResponseEntity<List<DietaResponse>> listarDietas(@RequestParam(required = false) String nomePaciente) {
     List<DietaResponse> dietaResponseList = service.listarDietasPorPaciente(nomePaciente);
     return ResponseEntity.status(HttpStatus.OK)
             .body(dietaResponseList);

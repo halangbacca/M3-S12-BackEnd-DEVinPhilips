@@ -17,7 +17,7 @@ public interface DietaMapper {
   @Mapping(target = "situacao", ignore = true)
   Dieta dietaRequestToDieta(DietaRequest request);
 
-  DietaResponse dietaToDietaResonse(Dieta dieta);
+  DietaResponse dietaToDietaResponse(Dieta dieta);
 
   default Dieta optionalDietaToDieta(Optional<Dieta> optionalDieta) {
     return optionalDieta.orElse(null);
