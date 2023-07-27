@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -74,6 +75,10 @@ public class UsuarioService {
         }
         throw new PacienteNotFoundExeception("Usuario não encontrado!");
 
+    }
+
+    public Optional<Usuario> buscarEmail(String email){
+        return repository.findByEmail(email);
     }
 
 }

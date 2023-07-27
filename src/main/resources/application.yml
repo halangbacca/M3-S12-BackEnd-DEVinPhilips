@@ -4,7 +4,7 @@ server:
 # OracleDB
 spring:
   datasource:
-    url: jdbc:oracle:thin:@//127.0.0.1:1521/FREE
+    url: jdbc:oracle:thin:@//127.0.0.1:1521/XE
     username: LABMEDICAL
     password: LABMEDICAL
     driver-class-name: oracle.jdbc.OracleDriver
@@ -18,3 +18,10 @@ spring:
 
   flyway:
     baselineOnMigrate: true
+
+#Security
+jwt_secret: hnoiuhgfspdbjhnq0486unbi fe~giu5e~df
+
+security:
+  jwt:
+    expiration: 86400000
