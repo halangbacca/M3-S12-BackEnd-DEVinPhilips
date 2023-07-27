@@ -1,6 +1,7 @@
 package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.PacienteRequest;
+import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
 import com.medsoft.labmedial.dtos.response.ConsultaResponse;
 import com.medsoft.labmedial.dtos.response.PacienteResponse;
@@ -75,5 +76,13 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(UsuarioMapper.INSTANCE.usuarioToResponse(novoUsuario));
 
+    }
+
+    @PutMapping("/resetarsenha")
+    public ResponseEntity<Object> resetarSenha (@Valid @RequestBody SenhaRequest request) {
+        if (service.resetarSenha(request.Id(), UsuarioMapper.INSTANCE.requestSenhaToUsuario(request))) {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        return null;
     }
 }

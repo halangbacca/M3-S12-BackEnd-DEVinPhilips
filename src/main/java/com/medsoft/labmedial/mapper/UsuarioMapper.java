@@ -1,6 +1,7 @@
 package com.medsoft.labmedial.mapper;
 
 import com.medsoft.labmedial.dtos.request.PacienteRequest;
+import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
 import com.medsoft.labmedial.dtos.response.PacienteResponse;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
@@ -13,5 +14,7 @@ import org.mapstruct.factory.Mappers;
 public interface UsuarioMapper {
     UsuarioMapper INSTANCE = Mappers.getMapper(UsuarioMapper.class);
     Usuario requestToUsuario(UsuarioRequest request);
+
+    Usuario requestSenhaToUsuario(SenhaRequest request);
     UsuarioResponse usuarioToResponse(Usuario usuario);
 }
