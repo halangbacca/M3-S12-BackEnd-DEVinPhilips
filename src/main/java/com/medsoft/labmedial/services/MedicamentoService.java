@@ -22,7 +22,7 @@ public class MedicamentoService {
     private MedicamentoRepository repository;
 
     public Medicamento cadastrarMedicamento(Medicamento request) {
-
+        request.setSituacao(true);
         return repository.save(request);
 
     }
@@ -47,13 +47,12 @@ public class MedicamentoService {
     }
 
     public Medicamento atualizarMedicamento(Long id, Medicamento request) {
-
         if (this.repository.existsById(id)) {
+            request.setSituacao(true);
             request.setId(id);
             return this.repository.save(request);
         }
         throw new MedicamentoNotFoundExeception("Medicamento não encontrado!");
-
     }
 
     public List<MedicamentoResponse> listarMedicamentosPorPaciente(String nomePaciente) {

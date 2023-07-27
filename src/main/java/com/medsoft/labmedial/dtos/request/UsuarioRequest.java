@@ -38,7 +38,9 @@ public record UsuarioRequest(
         String senha,
 
         //@NotBlank(message = "O nivel do usuário é obrigatório!")
-        NivelUsuario nivel
+        NivelUsuario nivel,
+
+        Boolean situacao
 
 ) {
 }

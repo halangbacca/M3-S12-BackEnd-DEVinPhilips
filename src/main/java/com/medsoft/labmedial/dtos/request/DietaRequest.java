@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.medsoft.labmedial.enums.TipoDieta;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public record DietaRequest(
 
@@ -13,8 +13,8 @@ public record DietaRequest(
         String nomeDieta,
 
         @NotNull(message = "A data da dieta é obrigatória")
-        @JsonFormat(pattern = "dd-MM-yyyy")
-        LocalDate dtaDieta,
+        @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
+        Date dtaDieta,
 
         TipoDieta tipoDieta,
         String descricao,

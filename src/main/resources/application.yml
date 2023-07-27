@@ -4,7 +4,7 @@ server:
 # OracleDB
 spring:
   datasource:
-    url: jdbc:oracle:thin:@//127.0.0.1:1521/FREE
+    url: jdbc:oracle:thin:@//127.0.0.1:1521/XE
     username: LABMEDICAL
     password: LABMEDICAL
     driver-class-name: oracle.jdbc.OracleDriver

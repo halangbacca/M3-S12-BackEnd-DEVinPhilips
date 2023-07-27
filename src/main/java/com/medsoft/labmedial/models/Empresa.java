@@ -27,4 +27,7 @@ public class Empresa {
 
     @Column(name = "LOGOTIPO")
     private String logotipo;
+
+    @Column(name = "SITUACAO")
+    private Boolean situacao;
 }

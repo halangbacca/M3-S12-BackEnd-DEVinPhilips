@@ -31,19 +31,20 @@ public class MedicamentoController {
     @PostMapping()
     public ResponseEntity<MedicamentoResponse> cadastrarExame(@Valid @RequestBody MedicamentoRequest request) {
 
-        Medicamento medicedicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
+        Medicamento medicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
 
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
-        if(paciente != null){
-            medicedicamento.setPaciente(paciente);
-            Medicamento novoMedicamento = service.cadastrarMedicamento(medicedicamento);
+        if (paciente != null) {
+            medicamento.setPaciente(paciente);
+            medicamento.setSituacao(true);
+            Medicamento novoMedicamento = service.cadastrarMedicamento(medicamento);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(novoMedicamento));
         }
 
-        throw new PacienteNotFoundExeception("Paciente não cadastrada!");
+        throw new PacienteNotFoundExeception("Paciente não cadastrado!");
     }
 
 
@@ -64,30 +65,29 @@ public class MedicamentoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
-        if(service.deletarPorId(id)){
+        if (service.deletarPorId(id)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<MedicamentoResponse> atualizarmedicamento(@PathVariable Long id,
-                                                              @Valid @RequestBody MedicamentoRequest request ){
+    public ResponseEntity<MedicamentoResponse> atualizarMedicamento(@PathVariable Long id,
+                                                                    @Valid @RequestBody MedicamentoRequest request) {
 
-
-        Medicamento medicedicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
+        Medicamento medicamentoEditado = service.buscarPorId(id);
 
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
-        if(paciente != null){
-            medicedicamento.setPaciente(paciente);
-            Medicamento novoMedicamento = service.atualizarMedicamento(id, medicedicamento);
+        if (paciente != null) {
+            medicamentoEditado.setPaciente(paciente);
+            medicamentoEditado.setSituacao(true);
+            service.atualizarMedicamento(id, MedicamentoMapper.INSTANCE.requestToMedicamento(request));
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(novoMedicamento));
+                    .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(medicamentoEditado));
         }
 
         throw new PacienteNotFoundExeception("Paciente não cadastrado!");
     }
-
 }

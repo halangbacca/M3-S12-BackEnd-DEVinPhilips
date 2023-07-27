@@ -20,7 +20,11 @@ public record UsuarioResponse(
 
         String email,
 
-        NivelUsuario nivel
+        String senha,
+
+        NivelUsuario nivel,
+
+        Boolean situacao
 
 ) {
 }

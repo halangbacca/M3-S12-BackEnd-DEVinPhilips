@@ -40,4 +40,7 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private NivelUsuario nivel;
 
+    @Column(name = "SITUACAO")
+    private Boolean situacao;
+
 }
