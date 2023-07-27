@@ -1,11 +1,14 @@
 package com.medsoft.labmedial.services;
 
+import com.medsoft.labmedial.enums.TipoOcorrencia;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
+import com.medsoft.labmedial.models.Ocorrencia;
 import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,10 +16,18 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
+    @Autowired
+    private OcorrenciaService ocorrenciaService;
+
     public Usuario cadastrarUsuario(Usuario request) {
 
+        Usuario usuario = repository.save(request);
 
-        return repository.save(request);
+        ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null,"USUARIO", usuario.getId(),
+                usuario.toString(),null,new Date(),null, TipoOcorrencia.INSERT));
+
+
+        return usuario;
 
     }
 
@@ -37,6 +48,10 @@ public class UsuarioService {
 
         repository.findById(id)
                 .map( usuario -> {
+
+                    ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null,"USUARIO", usuario.getId(),
+                            usuario.toString(),null,new Date(),null, TipoOcorrencia.DELETE));
+
                     repository.deleteById(id);
                     return true;
                         })
@@ -48,6 +63,11 @@ public class UsuarioService {
     public Usuario atualizarUsuario(Long id, Usuario request){
 
         if(this.repository.existsById(id)){
+
+            Usuario oldUsuario = buscarPorId(id);
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null,"USUARIO", id,
+                    request.toString(),oldUsuario.toString(),new Date(),null, TipoOcorrencia.UPDATE));
+
             request.setId(id);
             Usuario novoUsuario = this.repository.save(request);
             return novoUsuario;
