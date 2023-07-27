@@ -2,6 +2,7 @@ package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.LoginRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
+import com.medsoft.labmedial.dtos.response.LoginResponse;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
 import com.medsoft.labmedial.exceptions.UsuarioExeception;
 import com.medsoft.labmedial.mapper.UsuarioMapper;
@@ -102,17 +103,23 @@ public class UsuarioController {
     public ResponseEntity<Object> loginUsuario(@Valid @RequestBody LoginRequest usuarioLogin){
         try {
 
-            Usuario usuario = UsuarioMapper.INSTANCE.loginToUsuario(usuarioLogin);
+            Optional<Usuario> opUsuario = service.buscarEmail(usuarioLogin.email());
+
+            if(opUsuario.isEmpty()){
+                throw new UsuarioExeception("Credenciais Inválidas");
+            }
 
             UsernamePasswordAuthenticationToken authInputToken =
-                    new UsernamePasswordAuthenticationToken(usuario.getEmail(), usuario.getSenha());
+                    new UsernamePasswordAuthenticationToken(usuarioLogin.email(), usuarioLogin.senha());
 
             authManager.authenticate(authInputToken);
 
-            String token = jwtUtil.generateToken(usuario);
+            String token = jwtUtil.generateToken(opUsuario.get());
+
+            LoginResponse loginResponse = new LoginResponse(opUsuario.get(),token);
 
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(Collections.singletonMap("medsoft-token", token));
+                    .body(loginResponse);
 
         }catch (AuthenticationException authExc){
 
