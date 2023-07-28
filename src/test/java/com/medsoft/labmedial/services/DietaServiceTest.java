@@ -20,9 +20,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
-import java.time.LocalDate;
-import java.time.Month;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,10 +53,12 @@ class DietaServiceTest {
   private Dieta dietaAtualizadaMapped;
 
   @BeforeEach
-  void setUp() {
+  void setUp() throws ParseException {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    Date date = dateFormat.parse("2023-07-27 15:15");
     request = new DietaRequest(
             "Dieta 1",
-            LocalDate.of(2023, Month.JULY, 26),
+            date,
             TipoDieta.DASH,
             "Dieta dash",
             1L,
@@ -69,7 +72,7 @@ class DietaServiceTest {
     dietaMapped = new Dieta(
             1L,
             "Dieta 1",
-            LocalDate.of(2023, Month.JULY, 26),
+            date,
             TipoDieta.DASH,
             "Dieta dash",
             paciente,
@@ -79,7 +82,7 @@ class DietaServiceTest {
     dietaMapped = new Dieta(
             1L,
             "Dieta 1",
-            LocalDate.of(2023, Month.JULY, 26),
+            date,
             TipoDieta.DASH,
             "Dieta dash",
             paciente,
@@ -91,7 +94,7 @@ class DietaServiceTest {
     dietaSalva1 = new Dieta(
             1L,
             "Dieta 1",
-            LocalDate.of(2023, Month.JULY, 26),
+            date,
             TipoDieta.DASH,
             "Dieta dash",
             paciente,
@@ -101,7 +104,7 @@ class DietaServiceTest {
     dietaSalva2 = new Dieta(
             1L,
             "Dieta 1",
-            LocalDate.of(2023, Month.JULY, 26),
+            date,
             TipoDieta.DASH,
             "Dieta dash",
             paciente,
@@ -111,7 +114,7 @@ class DietaServiceTest {
     dietaResponse = new DietaResponse(
             1L,
             "Dieta 1",
-            LocalDate.of(2023, Month.JULY, 26),
+            date,
             TipoDieta.DASH,
             "Dieta dash",
             new NomePaciente(1L, "Paciente 1"),
