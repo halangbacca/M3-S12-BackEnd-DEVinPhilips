@@ -35,6 +35,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/api/usuarios/login").permitAll()
                         .requestMatchers("/**").authenticated()
                 )
+                .cors(cors-> new CorsConfiguration())
         ;
 
         return  http.build();
