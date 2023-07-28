@@ -9,6 +9,7 @@ public record EmpresaRequest(
         @NotNull(message = "A escolha da palheta de cores é obrigatória!")
         String palhetaDeCores,
         @NotNull(message = "A URL da logotipo é obrigatória!")
-        String logotipo
+        String logotipo,
+        Boolean situacao
 ) {
 }

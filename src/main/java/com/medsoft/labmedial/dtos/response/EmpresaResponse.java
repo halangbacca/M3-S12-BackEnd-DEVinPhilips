@@ -5,6 +5,7 @@ public record EmpresaResponse(
         String nome,
         String slogan,
         String palhetaDeCores,
-        String logotipo
+        String logotipo,
+        Boolean situacao
 ) {
 }

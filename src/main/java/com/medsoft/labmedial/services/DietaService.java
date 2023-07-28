@@ -46,15 +46,16 @@ public class DietaService {
   }
 
   public DietaResponse atualizarDieta(DietaRequest request, Long id) {
-    if (repository.existsById(id)) {
+    Optional<Dieta> optionalDieta = repository.findById(id);
+
+    if (optionalDieta.isPresent()) {
       Dieta dieta = mapper.dietaRequestToDieta(request);
       dieta.setId(id);
-      dieta.setSituacao(repository.findById(id).get().getSituacao());
+      dieta.setSituacao(optionalDieta.get().getSituacao());
       return mapper.dietaToDietaResponse(repository.save(dieta));
     } else {
       throw new DietaNotFoundException("Dieta não encontrada.");
     }
-
   }
 
   public void excluirDieta(Long id) {
@@ -66,15 +67,13 @@ public class DietaService {
   }
 
   public List<DietaResponse> listarDietasPorPaciente(String nomePaciente) {
-
-    List<Optional<Dieta>> dietas = repository.findAllDietasByPacienteNome(nomePaciente);
-
     if (nomePaciente == null) {
       return repository.findAll()
               .stream()
               .map(DietaMapper.INSTANCE::dietaToDietaResponse)
               .collect(Collectors.toList());
     } else {
+      List<Optional<Dieta>> dietas = repository.findAllDietasByPacienteNome(nomePaciente);
       return dietas.stream()
               .map(DietaMapper.INSTANCE::optionalDietaToDieta)
               .map(DietaMapper.INSTANCE::dietaToDietaResponse)

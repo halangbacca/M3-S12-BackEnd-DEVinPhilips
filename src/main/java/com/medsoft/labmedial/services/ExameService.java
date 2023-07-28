@@ -15,15 +15,13 @@ public class ExameService {
     private ExameRepository repository;
 
     public Exame cadastrarExame(Exame request) {
-
+        request.setSituacao(true);
         return repository.save(request);
 
     }
 
     public List<Exame> listarExames() {
-
         return repository.findAll();
-
     }
 
     public Exame buscarPorId(Long id) {
@@ -36,7 +34,7 @@ public class ExameService {
     public Boolean deletarPorId(Long id) {
 
         repository.findById(id)
-                .map( paciente -> {
+                .map(paciente -> {
                     repository.deleteById(id);
                     return true;
                 })
@@ -45,9 +43,9 @@ public class ExameService {
         return false;
     }
 
-    public Exame atualizarPaciente(Long id, Exame request){
+    public Exame atualizarPaciente(Long id, Exame request) {
 
-        if(this.repository.existsById(id)){
+        if (this.repository.existsById(id)) {
             request.setId(id);
             return this.repository.save(request);
         }

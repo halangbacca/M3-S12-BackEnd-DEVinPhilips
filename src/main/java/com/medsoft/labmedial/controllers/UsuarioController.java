@@ -1,6 +1,9 @@
 package com.medsoft.labmedial.controllers;
 
+
 import com.medsoft.labmedial.dtos.request.LoginRequest;
+import com.medsoft.labmedial.dtos.request.PacienteRequest;
+import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
 import com.medsoft.labmedial.dtos.response.LoginResponse;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
@@ -99,6 +102,7 @@ public class UsuarioController {
 
     }
 
+
     @PostMapping("/login")
     public ResponseEntity<Object> loginUsuario(@Valid @RequestBody LoginRequest usuarioLogin){
         try {
@@ -125,6 +129,15 @@ public class UsuarioController {
 
             throw new UsuarioExeception("Credenciais Inválidas");
         }
+    }
+
+
+    @PutMapping("/resetarsenha")
+    public ResponseEntity<Object> resetarSenha (@Valid @RequestBody SenhaRequest request) {
+        if (service.resetarSenha(request.Id(), UsuarioMapper.INSTANCE.requestSenhaToUsuario(request))) {
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        return null;
     }
 
 }

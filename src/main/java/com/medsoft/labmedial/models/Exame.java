@@ -17,13 +17,13 @@ public class Exame {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="ID")
+    @Column(name = "ID")
     private Long id;
 
     @Column(name = "DESCRICAO")
     private String descricao;
 
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "DTAEXAME")
     private Date dtaExame;
 
@@ -39,5 +39,8 @@ public class Exame {
     @ManyToOne()
     @JoinColumn(name = "IDPACIENTE")
     private Paciente paciente;
+
+    @Column(name = "SITUACAO")
+    private Boolean situacao;
 
 }

@@ -18,7 +18,8 @@ public record ExameResponse(
 
         String resultado,
 
-        Paciente paciente
+        Paciente paciente,
+        Boolean situacao
 
 ) {
 }

@@ -24,6 +24,7 @@ public class Exercicio {
     @Column(name = "NOMEEXERCICIO")
     private String nomeExercicio;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "DTAEXERCICIO")
     private Date dtaExercicio;
 

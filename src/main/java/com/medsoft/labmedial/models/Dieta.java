@@ -1,12 +1,12 @@
 package com.medsoft.labmedial.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.medsoft.labmedial.enums.TipoDieta;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "DIETA")
@@ -25,8 +25,9 @@ public class Dieta {
   @Column(name = "NOMEDIETA")
   private String nomeDieta;
 
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   @Column(name = "DTADIETA")
-  private LocalDate dtaDieta;
+  private Date dtaDieta;
 
   @Column(name = "TIPODIETA")
   @Enumerated(EnumType.STRING)

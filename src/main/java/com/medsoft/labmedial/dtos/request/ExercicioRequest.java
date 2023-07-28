@@ -13,7 +13,7 @@ public record ExercicioRequest(
         String nomeExercicio,
 
         @NotNull(message = "A data do exercício é obrigatória")
-        @JsonFormat(pattern = "dd-MM-yyyy")
+        @JsonFormat(pattern = "dd/MM/yyyy hh:mm:ss")
         Date dtaExercicio,
 
         TipoExercicio tipoExercicio,
