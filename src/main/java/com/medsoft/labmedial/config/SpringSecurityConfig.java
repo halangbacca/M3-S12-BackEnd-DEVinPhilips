@@ -1,8 +1,10 @@
 package com.medsoft.labmedial.config;
 
 import com.medsoft.labmedial.security.JWTFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -19,8 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
+    @Qualifier("delegatedAuthenticationEntryPoint")
+    AuthenticationEntryPoint authEntryPoint;
     private final JWTFilter jwtFilter;
-    public SpringSecurityConfig(JWTFilter jwtFilter) {
+    public SpringSecurityConfig(AuthenticationEntryPoint authEntryPoint, JWTFilter jwtFilter) {
+        this.authEntryPoint = authEntryPoint;
         this.jwtFilter = jwtFilter;
     }
 
@@ -36,6 +42,7 @@ public class SpringSecurityConfig {
                         .requestMatchers("/**").authenticated()
                 )
                 .cors(cors-> new CorsConfiguration())
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(this.authEntryPoint))
         ;
 
         return  http.build();
