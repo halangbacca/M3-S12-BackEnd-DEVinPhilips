@@ -2,7 +2,7 @@ package com.medsoft.labmedial.services;
 
 import com.medsoft.labmedial.dtos.request.ExercicioRequest;
 import com.medsoft.labmedial.dtos.response.ExercicioResponse;
-import com.medsoft.labmedial.exceptions.DietaNotFoundException;
+import com.medsoft.labmedial.exceptions.ExercicioNotFoundException;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.mapper.ExercicioMapper;
 import com.medsoft.labmedial.models.Exercicio;
@@ -38,18 +38,19 @@ public class ExercicioService {
       exercicio.setSituacao(true);
       return mapper.exercicioToExercicioResponse(repository.save(exercicio));
     } else {
-      throw new PacienteNotFoundExeception("Paciente não encontrado");
+      throw new PacienteNotFoundExeception("Paciente não encontrado.");
     }
   }
 
   public ExercicioResponse atualizarExercicio(ExercicioRequest request, Long id) {
-    if (repository.existsById(id)) {
+    Optional<Exercicio> optionalExercicio = repository.findById(id);
+    if (optionalExercicio.isPresent()) {
       Exercicio exercicio = mapper.exercicioRequestToExercicio(request);
       exercicio.setId(id);
-      exercicio.setSituacao(repository.findById(id).get().getSituacao());
+      exercicio.setSituacao(optionalExercicio.get().getSituacao());
       return mapper.exercicioToExercicioResponse(repository.save(exercicio));
     } else {
-      throw new DietaNotFoundException("Exercício não encontrado.");
+      throw new ExercicioNotFoundException("Exercício não encontrado.");
     }
 
   }
@@ -58,7 +59,7 @@ public class ExercicioService {
     if (repository.existsById(id)) {
       repository.deleteById(id);
     } else {
-      throw new DietaNotFoundException("Exercício não encontrado.");
+      throw new ExercicioNotFoundException("Exercício não encontrado.");
     }
   }
 
