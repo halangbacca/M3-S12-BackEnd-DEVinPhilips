@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -76,6 +77,11 @@ public class UsuarioService {
 
     }
 
+
+    public Optional<Usuario> buscarEmail(String email){
+        return repository.findByEmail(email);
+    }
+
     public Boolean resetarSenha(Long id, Usuario request) {
         repository.findById(id)
                 .map( usuario -> {
@@ -86,6 +92,7 @@ public class UsuarioService {
                 })
                 .orElseThrow(() -> new PacienteNotFoundExeception("Usuário não encontrado!"));
         return null;
+
     }
 
 }

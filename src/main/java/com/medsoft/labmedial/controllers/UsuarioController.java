@@ -1,42 +1,66 @@
 package com.medsoft.labmedial.controllers;
 
+
+import com.medsoft.labmedial.dtos.request.LoginRequest;
 import com.medsoft.labmedial.dtos.request.PacienteRequest;
 import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
-import com.medsoft.labmedial.dtos.response.ConsultaResponse;
-import com.medsoft.labmedial.dtos.response.PacienteResponse;
+import com.medsoft.labmedial.dtos.response.LoginResponse;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
-import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
-import com.medsoft.labmedial.mapper.ConsultaMapper;
+import com.medsoft.labmedial.exceptions.UsuarioExeception;
 import com.medsoft.labmedial.mapper.UsuarioMapper;
-import com.medsoft.labmedial.models.Consulta;
-import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.models.Usuario;
-import com.medsoft.labmedial.services.PacienteService;
+import com.medsoft.labmedial.security.JWTUtil;
 import com.medsoft.labmedial.services.UsuarioService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin
 public class UsuarioController {
-    @Autowired
-    private UsuarioService service;
+
+
+    private final UsuarioService service;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
+    private final AuthenticationManager authManager;
+
+    public UsuarioController(UsuarioService service, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, AuthenticationManager authManager) {
+        this.service = service;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.authManager = authManager;
+    }
 
     @PostMapping()
-    public ResponseEntity<UsuarioResponse> cadastrarUsuario(@Valid @RequestBody UsuarioRequest request) {
+    public ResponseEntity<Object> cadastrarUsuario(@Valid @RequestBody UsuarioRequest request) {
+
+        Optional<Usuario> optUsuario = this.service.buscarEmail(request.email());
+
+        if(optUsuario.isPresent()){
+            throw new UsuarioExeception("Email já cadastrado");
+        }
+
         Usuario usuario = UsuarioMapper.INSTANCE.requestToUsuario(request);
 
-
-        Usuario novoUsuario = service.cadastrarUsuario(usuario);
+        String encodedPass = passwordEncoder.encode(request.senha());
+        usuario.setSenha(encodedPass);
+        Usuario newUsuario = service.cadastrarUsuario(usuario);
+        String token = jwtUtil.generateToken(newUsuario);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(UsuarioMapper.INSTANCE.usuarioToResponse(novoUsuario));
+                .body(Collections.singletonMap("medsoft-token", token));
 
     }
 
@@ -78,6 +102,36 @@ public class UsuarioController {
 
     }
 
+
+    @PostMapping("/login")
+    public ResponseEntity<Object> loginUsuario(@Valid @RequestBody LoginRequest usuarioLogin){
+        try {
+
+            Optional<Usuario> opUsuario = service.buscarEmail(usuarioLogin.email());
+
+            if(opUsuario.isEmpty()){
+                throw new UsuarioExeception("Credenciais Inválidas");
+            }
+
+            UsernamePasswordAuthenticationToken authInputToken =
+                    new UsernamePasswordAuthenticationToken(usuarioLogin.email(), usuarioLogin.senha());
+
+            authManager.authenticate(authInputToken);
+
+            String token = jwtUtil.generateToken(opUsuario.get());
+
+            LoginResponse loginResponse = new LoginResponse(opUsuario.get(),token);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(loginResponse);
+
+        }catch (AuthenticationException authExc){
+
+            throw new UsuarioExeception("Credenciais Inválidas");
+        }
+    }
+
+
     @PutMapping("/resetarsenha")
     public ResponseEntity<Object> resetarSenha (@Valid @RequestBody SenhaRequest request) {
         if (service.resetarSenha(request.Id(), UsuarioMapper.INSTANCE.requestSenhaToUsuario(request))) {
@@ -85,4 +139,5 @@ public class UsuarioController {
         }
         return null;
     }
+
 }
