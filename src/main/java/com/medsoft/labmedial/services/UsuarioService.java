@@ -76,4 +76,16 @@ public class UsuarioService {
 
     }
 
+    public Boolean resetarSenha(Long id, Usuario request) {
+        repository.findById(id)
+                .map( usuario -> {
+                    repository.findById(id);
+                    usuario.setSenha(request.getSenha());
+                    this.repository.save(usuario);
+                    return true;
+                })
+                .orElseThrow(() -> new PacienteNotFoundExeception("Usuário não encontrado!"));
+        return null;
+    }
+
 }
