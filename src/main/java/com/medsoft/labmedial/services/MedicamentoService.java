@@ -24,7 +24,6 @@ public class MedicamentoService {
     public Medicamento cadastrarMedicamento(Medicamento request) {
         request.setSituacao(true);
         return repository.save(request);
-
     }
 
     public Medicamento buscarPorId(Long id) {
