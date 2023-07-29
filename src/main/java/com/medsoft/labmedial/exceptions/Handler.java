@@ -2,6 +2,7 @@ package com.medsoft.labmedial.exceptions;
 
 import com.medsoft.labmedial.dtos.response.ErrorObject;
 import com.medsoft.labmedial.dtos.response.ErrorResponse;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class Handler {
     @ExceptionHandler(UsuarioExeception.class)
     public ResponseEntity<ErrorResponse> trataErro403(Exception ex) {
         HttpStatus codigo = HttpStatus.FORBIDDEN;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(),codigo.value(),codigo.toString(),ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(PacienteNotFoundExeception.class)
+    public ResponseEntity<ErrorResponse> handlePacienteNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
         ErrorResponse error = new ErrorResponse(ex.getMessage(),codigo.value(),codigo.toString(),ex.getClass().getSimpleName(), null);
         return ResponseEntity.status(codigo).body(error);
     }
