@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/estatistica")
+@RequestMapping("/api/estatisticas")
 public class EstatisticaController {
 
     private final EstatisticaService service;

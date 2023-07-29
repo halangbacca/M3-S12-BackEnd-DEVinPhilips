@@ -34,7 +34,7 @@ public class EmpresaController {
 
         List<EmpresaResponse> empresasResponses = service.listarEmpresas()
                 .stream()
-                .map((Empresa empresa) -> EmpresaMapper.INSTANCE.empresaToResponse(empresa)).toList();
+                .map(EmpresaMapper.INSTANCE::empresaToResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(empresasResponses);

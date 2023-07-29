@@ -34,7 +34,7 @@ public class PacienteController {
 
         List<PacienteResponse> pacienteResponse = service.listarPacientes()
                 .stream()
-                .map(paciente -> new PacienteResponse(paciente)).toList();
+                .map(PacienteResponse::new).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pacienteResponse);

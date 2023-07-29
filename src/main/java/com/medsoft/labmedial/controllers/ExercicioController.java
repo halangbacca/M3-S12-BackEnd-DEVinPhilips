@@ -16,40 +16,40 @@ import java.util.List;
 @RequestMapping(value = "/api/exercicios", produces = "application/json")
 @CrossOrigin
 public class ExercicioController {
-  private final ExercicioService service;
+    private final ExercicioService service;
 
-  @Autowired
-  public ExercicioController(ExercicioService service) {
-    this.service = service;
-  }
+    @Autowired
+    public ExercicioController(ExercicioService service) {
+        this.service = service;
+    }
 
-  @PostMapping
-  public ResponseEntity<ExercicioResponse> cadastrarExercicio(@Valid
-                                                              @RequestBody ExercicioRequest request) {
-    ExercicioResponse exercicioSalvo = service.cadastrarExercicio(request);
-    return ResponseEntity.status(HttpStatus.CREATED)
-            .body(exercicioSalvo);
-  }
+    @PostMapping
+    public ResponseEntity<ExercicioResponse> cadastrarExercicio(@Valid
+                                                                @RequestBody ExercicioRequest request) {
+        ExercicioResponse exercicioSalvo = service.cadastrarExercicio(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(exercicioSalvo);
+    }
 
-  @PutMapping("/{id}")
-  public ResponseEntity<ExercicioResponse> atualizarExercicio(@Valid @RequestBody ExercicioRequest request,
-                                                      @PathVariable Long id) {
-    ExercicioResponse exercicioEditado = service.atualizarExercicio(request, id);
-    return ResponseEntity.status(HttpStatus.CREATED)
-            .body(exercicioEditado);
-  }
+    @PutMapping("/{id}")
+    public ResponseEntity<ExercicioResponse> atualizarExercicio(@Valid @RequestBody ExercicioRequest request,
+                                                                @PathVariable Long id) {
+        ExercicioResponse exercicioEditado = service.atualizarExercicio(request, id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(exercicioEditado);
+    }
 
-  @GetMapping
-  public ResponseEntity<List<ExercicioResponse>> listarExercicios(@RequestParam(required = false) String nomePaciente) {
-    List<ExercicioResponse> exercicioResponseList = service.listarExerciciosPorPaciente(nomePaciente);
-    return ResponseEntity.status(HttpStatus.OK)
-            .body(exercicioResponseList);
-  }
+    @GetMapping
+    public ResponseEntity<List<ExercicioResponse>> listarExercicios(@RequestParam(required = false) String nomePaciente) {
+        List<ExercicioResponse> exercicioResponseList = service.listarExerciciosPorPaciente(nomePaciente);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(exercicioResponseList);
+    }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Any> excluirExercicio(@PathVariable Long id) {
-    service.excluirExercicio(id);
-    return ResponseEntity.status(HttpStatus.ACCEPTED)
-            .body(null);
-  }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Any> excluirExercicio(@PathVariable Long id) {
+        service.excluirExercicio(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(null);
+    }
 }

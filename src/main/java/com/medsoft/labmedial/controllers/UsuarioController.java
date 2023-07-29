@@ -2,7 +2,6 @@ package com.medsoft.labmedial.controllers;
 
 
 import com.medsoft.labmedial.dtos.request.LoginRequest;
-import com.medsoft.labmedial.dtos.request.PacienteRequest;
 import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
 import com.medsoft.labmedial.dtos.response.LoginResponse;
@@ -49,7 +48,7 @@ public class UsuarioController {
         Optional<Usuario> optUsuario = this.service.buscarEmail(request.email());
 
         if(optUsuario.isPresent()){
-            throw new UsuarioExeception("Email já cadastrado");
+            throw new UsuarioExeception("E-mail já cadastrado!");
         }
 
         Usuario usuario = UsuarioMapper.INSTANCE.requestToUsuario(request);
@@ -69,7 +68,7 @@ public class UsuarioController {
 
         List<UsuarioResponse> usuarioResponses = service.listarUsuarios()
                 .stream()
-                .map((Usuario usuario) -> UsuarioMapper.INSTANCE.usuarioToResponse(usuario)).toList();
+                .map(UsuarioMapper.INSTANCE::usuarioToResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(usuarioResponses);

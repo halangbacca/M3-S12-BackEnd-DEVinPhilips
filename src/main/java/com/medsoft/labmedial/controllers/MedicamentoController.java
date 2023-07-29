@@ -1,7 +1,6 @@
 package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.MedicamentoRequest;
-import com.medsoft.labmedial.dtos.response.DietaResponse;
 import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.mapper.MedicamentoMapper;

@@ -49,7 +49,7 @@ public class ConsultaController {
 
         List<ConsultaResponse> consultaResponses = service.listarConsultas()
                 .stream()
-                .map((Consulta consulta) -> ConsultaMapper.INSTANCE.consultaToResponse(consulta)).toList();
+                .map(ConsultaMapper.INSTANCE::consultaToResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(consultaResponses);
@@ -86,7 +86,7 @@ public class ConsultaController {
                     .body(ConsultaMapper.INSTANCE.consultaToResponse(newConsulta));
         }
 
-        throw new ConsultaNotFoundExeception("Consulta não cadastrado");
+        throw new ConsultaNotFoundExeception("Consulta não cadastrada!");
 
     }
 
