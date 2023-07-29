@@ -37,6 +37,9 @@ class MedicamentoServiceTest {
     @Mock
     MedicamentoMapper mapper;
 
+    @Mock
+    OcorrenciaService ocorrenciaService;
+
     @InjectMocks
     private MedicamentoService service;
 
