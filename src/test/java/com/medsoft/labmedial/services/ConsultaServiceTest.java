@@ -1,19 +1,13 @@
 package com.medsoft.labmedial.services;
 
 import com.medsoft.labmedial.dtos.request.ConsultaRequest;
-import com.medsoft.labmedial.dtos.request.MedicamentoRequest;
 import com.medsoft.labmedial.dtos.response.ConsultaResponse;
-import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
 import com.medsoft.labmedial.dtos.response.NomePaciente;
 import com.medsoft.labmedial.exceptions.ConsultaNotFoundExeception;
-import com.medsoft.labmedial.exceptions.MedicamentoNotFoundExeception;
 import com.medsoft.labmedial.mapper.ConsultaMapper;
-import com.medsoft.labmedial.mapper.MedicamentoMapper;
 import com.medsoft.labmedial.models.Consulta;
-import com.medsoft.labmedial.models.Medicamento;
 import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.repositories.ConsultaRepository;
-import com.medsoft.labmedial.repositories.MedicamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

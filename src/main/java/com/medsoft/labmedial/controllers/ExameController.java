@@ -31,7 +31,7 @@ public class ExameController {
         Exame exame = ExameMapper.INSTANCE.requestToExame(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
-        if(paciente != null){
+        if (paciente != null) {
             exame.setPaciente(paciente);
             Exame newExame = service.cadastrarExame(exame);
 
@@ -39,16 +39,16 @@ public class ExameController {
                     .body(ExameMapper.INSTANCE.exameToResponse(newExame));
         }
 
-        throw new PacienteNotFoundExeception("Paciente não cadastrado");
+        throw new PacienteNotFoundExeception("Paciente não cadastrado!");
 
     }
 
     @GetMapping()
-    public ResponseEntity<List<ExameResponse>> listarPacientes() {
+    public ResponseEntity<List<ExameResponse>> listarExames() {
 
         List<ExameResponse> exameResponses = service.listarExames()
                 .stream()
-                .map((Exame exame) -> ExameMapper.INSTANCE.exameToResponse(exame)).toList();
+                .map(ExameMapper.INSTANCE::exameToResponse).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(exameResponses);
@@ -64,28 +64,28 @@ public class ExameController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 
-        if(service.deletarPorId(id)){
+        if (service.deletarPorId(id)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ExameResponse> atualizarPaciente(@PathVariable Long id,
-                                                              @Valid @RequestBody ExameRequest request ){
+    public ResponseEntity<ExameResponse> atualizarExame(@PathVariable Long id,
+                                                        @Valid @RequestBody ExameRequest request) {
 
         Exame exame = ExameMapper.INSTANCE.requestToExame(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
-        if(paciente != null){
+        if (paciente != null) {
             exame.setPaciente(paciente);
-            Exame newExame = service.atualizarPaciente(id, exame);
+            Exame newExame = service.atualizarExame(id, exame);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ExameMapper.INSTANCE.exameToResponse(newExame));
         }
 
-        throw new PacienteNotFoundExeception("Paciente não cadastrado");
+        throw new PacienteNotFoundExeception("Paciente não cadastrado!");
 
     }
 
