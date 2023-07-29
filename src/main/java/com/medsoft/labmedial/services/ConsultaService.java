@@ -31,29 +31,29 @@ public class ConsultaService {
     public Consulta buscarPorId(Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() -> new ConsultaNotFoundExeception("Consulta não encontrado!"));
+                .orElseThrow(() -> new ConsultaNotFoundExeception("Consulta não encontrada!"));
 
     }
 
     public Boolean deletarPorId(Long id) {
 
         repository.findById(id)
-                .map( consulta -> {
+                .map(consulta -> {
                     repository.deleteById(id);
                     return true;
                 })
-                .orElseThrow(() -> new ConsultaNotFoundExeception("Consulta não encontrado!"));
+                .orElseThrow(() -> new ConsultaNotFoundExeception("Consulta não encontrada!"));
 
         return false;
     }
 
-    public Consulta atualizarConsulta(Long id, Consulta request){
+    public Consulta atualizarConsulta(Long id, Consulta request) {
 
-        if(this.repository.existsById(id)){
+        if (this.repository.existsById(id)) {
             request.setId(id);
             return this.repository.save(request);
         }
-        throw new ConsultaNotFoundExeception("Consulta não encontrado!");
+        throw new ConsultaNotFoundExeception("Consulta não encontrada!");
 
     }
 
