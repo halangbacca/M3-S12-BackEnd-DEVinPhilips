@@ -41,16 +41,14 @@ public class PacienteService {
 
     }
 
-    public Boolean deletarPorId(Long id) {
+    public Paciente deletarPorId(Long id) {
 
-        repository.findById(id)
-                .map(paciente -> {
+        return repository.findById(id)
+                .map( paciente -> {
                     repository.deleteById(id);
-                    return true;
-                })
+                    return paciente;
+                        })
                 .orElseThrow(() -> new PacienteNotFoundExeception("Paciente não encontrado!"));
-
-        return false;
     }
 
     public Paciente atualizarPaciente(Long id, Paciente request) {

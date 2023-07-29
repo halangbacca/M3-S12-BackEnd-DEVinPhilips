@@ -50,12 +50,12 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<PacienteResponse> deletarPorId(@PathVariable Long id) {
 
-        if(service.deletarPorId(id)){
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
-        }
-        return null;
+        PacienteResponse pacienteResponse = new PacienteResponse(service.deletarPorId(id));
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(pacienteResponse);
     }
 
     @PutMapping("/{id}")
