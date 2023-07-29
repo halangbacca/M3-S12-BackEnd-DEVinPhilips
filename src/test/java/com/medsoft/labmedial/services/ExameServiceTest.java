@@ -196,7 +196,7 @@ class ExameServiceTest {
 
     @Test
     @DisplayName("Deve retornar lista de exames")
-    void listarTodasExames() {
+    void listarTodosExames() {
         List<Exame> examesList = new ArrayList<>();
         examesList.add(exameSalvo1);
         examesList.add(exameSalvo2);
