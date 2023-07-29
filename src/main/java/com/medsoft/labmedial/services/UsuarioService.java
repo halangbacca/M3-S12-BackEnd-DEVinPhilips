@@ -24,8 +24,8 @@ public class UsuarioService {
 
         Usuario usuario = repository.save(request);
 
-        ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null,"USUARIO", usuario.getId(),
-                usuario.toString(),null,new Date(),null, TipoOcorrencia.INSERT));
+        ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", usuario.getId(),
+                usuario.toString(), null, new Date(), null, TipoOcorrencia.INSERT));
 
 
         return usuario;
@@ -48,32 +48,32 @@ public class UsuarioService {
     public Boolean deletarPorId(Long id) {
 
         repository.findById(id)
-                .map( usuario -> {
+                .map(usuario -> {
 
-                    ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null,"USUARIO", usuario.getId(),
-                            usuario.toString(),null,new Date(),null, TipoOcorrencia.DELETE));
+                    ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", usuario.getId(),
+                            usuario.toString(), null, new Date(), null, TipoOcorrencia.DELETE));
 
                     repository.deleteById(id);
                     return true;
-                        })
+                })
                 .orElseThrow(() -> new PacienteNotFoundExeception("Usuário não encontrado!"));
 
         return false;
     }
 
-    public Usuario atualizarUsuario(Long id, Usuario request){
+    public Usuario atualizarUsuario(Long id, Usuario request) {
 
-        if(this.repository.existsById(id)){
+        if (this.repository.existsById(id)) {
 
             Usuario oldUsuario = buscarPorId(id);
-            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null,"USUARIO", id,
-                    request.toString(),oldUsuario.toString(),new Date(),null, TipoOcorrencia.UPDATE));
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", id,
+                    request.toString(), oldUsuario.toString(), new Date(), null, TipoOcorrencia.UPDATE));
 
             request.setId(id);
             Usuario novoUsuario = this.repository.save(request);
             return novoUsuario;
         }
-        throw new PacienteNotFoundExeception("Usuario não encontrado!");
+        throw new PacienteNotFoundExeception("Usuário não encontrado!");
 
     }
 
