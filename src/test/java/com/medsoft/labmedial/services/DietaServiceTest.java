@@ -33,237 +33,241 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureMockMvc
 class DietaServiceTest {
 
-  @Mock
-  private DietaRepository repository;
+    @Mock
+    private DietaRepository repository;
 
-  @Mock
-  private PacienteService pacienteService;
+    @Mock
+    private PacienteService pacienteService;
 
-  @Mock DietaMapper mapper;
+    @Mock
+    DietaMapper mapper;
 
-  @InjectMocks
-  private DietaService service;
+    @Mock
+    OcorrenciaService ocorrenciaService;
 
-  private DietaRequest request;
-  private Paciente paciente;
-  private Dieta dietaSalva1;
-  private Dieta dietaSalva2;
-  private Dieta dietaMapped;
-  private DietaResponse dietaResponse;
-  private Dieta dietaAtualizadaMapped;
+    @InjectMocks
+    private DietaService service;
 
-  @BeforeEach
-  void setUp() throws ParseException {
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    Date date = dateFormat.parse("2023-07-27 15:15");
-    request = new DietaRequest(
-            "Dieta 1",
-            date,
-            TipoDieta.DASH,
-            "Dieta dash",
-            1L,
-            null
-    );
+    private DietaRequest request;
+    private Paciente paciente;
+    private Dieta dietaSalva1;
+    private Dieta dietaSalva2;
+    private Dieta dietaMapped;
+    private DietaResponse dietaResponse;
+    private Dieta dietaAtualizadaMapped;
 
-    paciente = Mockito.mock(Paciente.class);
-    paciente.setId(1L);
-    paciente.setNome("Paciente 1");
+    @BeforeEach
+    void setUp() throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = dateFormat.parse("2023-07-27 15:15");
+        request = new DietaRequest(
+                "Dieta 1",
+                date,
+                TipoDieta.DASH,
+                "Dieta dash",
+                1L,
+                null
+        );
 
-    dietaMapped = new Dieta(
-            1L,
-            "Dieta 1",
-            date,
-            TipoDieta.DASH,
-            "Dieta dash",
-            paciente,
-            null
-    );
+        paciente = Mockito.mock(Paciente.class);
+        paciente.setId(1L);
+        paciente.setNome("Paciente 1");
 
-    dietaMapped = new Dieta(
-            1L,
-            "Dieta 1",
-            date,
-            TipoDieta.DASH,
-            "Dieta dash",
-            paciente,
-            null
-    );
+        dietaMapped = new Dieta(
+                1L,
+                "Dieta 1",
+                date,
+                TipoDieta.DASH,
+                "Dieta dash",
+                paciente,
+                null
+        );
 
-    dietaAtualizadaMapped = Mockito.mock(Dieta.class);
+        dietaMapped = new Dieta(
+                1L,
+                "Dieta 1",
+                date,
+                TipoDieta.DASH,
+                "Dieta dash",
+                paciente,
+                null
+        );
 
-    dietaSalva1 = new Dieta(
-            1L,
-            "Dieta 1",
-            date,
-            TipoDieta.DASH,
-            "Dieta dash",
-            paciente,
-            true
-    );
+        dietaAtualizadaMapped = Mockito.mock(Dieta.class);
 
-    dietaSalva2 = new Dieta(
-            1L,
-            "Dieta 1",
-            date,
-            TipoDieta.DASH,
-            "Dieta dash",
-            paciente,
-            true
-    );
+        dietaSalva1 = new Dieta(
+                1L,
+                "Dieta 1",
+                date,
+                TipoDieta.DASH,
+                "Dieta dash",
+                paciente,
+                true
+        );
 
-    dietaResponse = new DietaResponse(
-            1L,
-            "Dieta 1",
-            date,
-            TipoDieta.DASH,
-            "Dieta dash",
-            new NomePaciente(1L, "Paciente 1"),
-            true
-    );
-  }
+        dietaSalva2 = new Dieta(
+                1L,
+                "Dieta 1",
+                date,
+                TipoDieta.DASH,
+                "Dieta dash",
+                paciente,
+                true
+        );
 
-  @Test
-  @DisplayName("Deve retornar a dieta salva")
-  void cadastrarDieta() {
-    Mockito.when(pacienteService.buscarPorId(request.idPaciente()))
-            .thenReturn(paciente);
+        dietaResponse = new DietaResponse(
+                1L,
+                "Dieta 1",
+                date,
+                TipoDieta.DASH,
+                "Dieta dash",
+                new NomePaciente(1L, "Paciente 1"),
+                true
+        );
+    }
 
-    Mockito.when(mapper.dietaRequestToDieta(request))
-            .thenReturn(dietaMapped);
+    @Test
+    @DisplayName("Deve retornar a dieta salva")
+    void cadastrarDieta() {
+        Mockito.when(pacienteService.buscarPorId(request.idPaciente()))
+                .thenReturn(paciente);
 
-    Mockito.when(repository.save(dietaMapped))
-            .thenReturn(dietaSalva1);
+        Mockito.when(mapper.dietaRequestToDieta(request))
+                .thenReturn(dietaMapped);
 
-    Mockito.when(mapper.dietaToDietaResponse(dietaSalva1))
-            .thenReturn(dietaResponse);
+        Mockito.when(repository.save(dietaMapped))
+                .thenReturn(dietaSalva1);
 
-    DietaResponse result = service.cadastrarDieta(request);
+        Mockito.when(mapper.dietaToDietaResponse(dietaSalva1))
+                .thenReturn(dietaResponse);
 
-    assertAll(
-            () -> assertNotNull(result),
-            () -> assertEquals(result.paciente().id(), request.idPaciente()),
-            () -> assertEquals(result.situacao(), true)
-    );
+        DietaResponse result = service.cadastrarDieta(request);
 
-    Mockito.verify(pacienteService).buscarPorId(request.idPaciente());
+        assertAll(
+                () -> assertNotNull(result),
+                () -> assertEquals(result.paciente().id(), request.idPaciente()),
+                () -> assertEquals(result.situacao(), true)
+        );
 
-    Mockito.verify(mapper).dietaRequestToDieta(request);
+        Mockito.verify(pacienteService).buscarPorId(request.idPaciente());
 
-    Mockito.verify(mapper).dietaToDietaResponse(dietaSalva1);
-  }
+        Mockito.verify(mapper).dietaRequestToDieta(request);
 
-  @Test
-  @DisplayName("Deve lançar o erro de paciente não encontrado")
-  void cadastrarDietaPacienteNaoLocalizado() {
-    Mockito.when(pacienteService.buscarPorId(request.idPaciente()))
-            .thenReturn(null);
+        Mockito.verify(mapper).dietaToDietaResponse(dietaSalva1);
+    }
 
-
-    Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-            () -> service.cadastrarDieta(request));
-
-    assertEquals("Paciente não encontrado.", errorMessage.getMessage());
-  }
-
-  @Test
-  @DisplayName("Deve atualizar a dieta e retornar a dieta salva")
-  void atualizarDieta() {
-    Mockito.when(repository.findById(1L))
-            .thenReturn(Optional.of(dietaSalva1));
-
-    Mockito.when(mapper.dietaRequestToDieta(request))
-            .thenReturn(dietaAtualizadaMapped);
-
-    Mockito.when(mapper.dietaToDietaResponse(dietaSalva1))
-            .thenReturn(dietaResponse);
-
-    Mockito.when(repository.save(dietaAtualizadaMapped))
-            .thenReturn(dietaSalva1);
-
-    DietaResponse result = service.atualizarDieta(request, 1L);
-
-    assertAll(
-            () -> assertNotNull(result),
-            () -> assertEquals(result.paciente().id(), request.idPaciente()),
-            () -> assertEquals(result.situacao(), true)
-    );
-
-    Mockito.verify(repository).findById(1L);
-
-    Mockito.verify(mapper).dietaRequestToDieta(request);
-
-    Mockito.verify(mapper).dietaToDietaResponse(dietaSalva1);
-  }
-
-  @Test
-  @DisplayName("Deve lançar o erro de dieta não encontrado")
-  void cadastrarDietaNaoLocalizada() {
-    Mockito.when(repository.findById(1L))
-            .thenReturn(Optional.empty());
-
-    Exception errorMessage = assertThrows(DietaNotFoundException.class,
-            () -> service.atualizarDieta(request, 1L));
-
-    assertEquals("Dieta não encontrada.", errorMessage.getMessage());
-  }
-
-  @Test
-  @DisplayName("Deve excluir uma dieta")
-  void excluirDieta() {
-    Long id = 1L;
-
-    Mockito.when(repository.existsById(id))
-            .thenReturn(true);
-
-    service.excluirDieta(id);
-
-    Mockito.verify(repository).existsById(id);
-    Mockito.verify(repository).deleteById(id);
-  }
-
-  @Test
-  @DisplayName("Deve lançar erro dieta não localizada quando tentar excluir dieta não cadastrada")
-  void excluirDietaNaoEncontrada() {
-    Mockito.when(repository.existsById(1L))
-            .thenReturn(false);
-
-    Exception errorMessage = assertThrows(DietaNotFoundException.class,
-            () -> service.excluirDieta(1L));
-
-    assertEquals("Dieta não encontrada.", errorMessage.getMessage());
-  }
+    @Test
+    @DisplayName("Deve lançar o erro de paciente não encontrado")
+    void cadastrarDietaPacienteNaoLocalizado() {
+        Mockito.when(pacienteService.buscarPorId(request.idPaciente()))
+                .thenReturn(null);
 
 
-  @Test
-  @DisplayName("Deve retornar lista de dietas quanto não for passado nome do paciente")
-  void listarTodasDietas() {
-    List<Dieta> dietaList = new ArrayList<>();
-    dietaList.add(dietaSalva1);
-    dietaList.add(dietaSalva2);
+        Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
+                () -> service.cadastrarDieta(request));
 
-    Mockito.when(repository.findAll())
-            .thenReturn(dietaList);
+        assertEquals("Paciente não encontrado.", errorMessage.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve atualizar a dieta e retornar a dieta salva")
+    void atualizarDieta() {
+        Mockito.when(repository.findById(1L))
+                .thenReturn(Optional.of(dietaSalva1));
+
+        Mockito.when(mapper.dietaRequestToDieta(request))
+                .thenReturn(dietaAtualizadaMapped);
+
+        Mockito.when(mapper.dietaToDietaResponse(dietaSalva1))
+                .thenReturn(dietaResponse);
+
+        Mockito.when(repository.save(dietaAtualizadaMapped))
+                .thenReturn(dietaSalva1);
+
+        DietaResponse result = service.atualizarDieta(request, 1L);
+
+        assertAll(
+                () -> assertNotNull(result),
+                () -> assertEquals(result.paciente().id(), request.idPaciente()),
+                () -> assertEquals(result.situacao(), true)
+        );
+
+        Mockito.verify(repository).findById(1L);
+
+        Mockito.verify(mapper).dietaRequestToDieta(request);
+
+        Mockito.verify(mapper).dietaToDietaResponse(dietaSalva1);
+    }
+
+    @Test
+    @DisplayName("Deve lançar o erro de dieta não encontrado")
+    void cadastrarDietaNaoLocalizada() {
+        Mockito.when(repository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        Exception errorMessage = assertThrows(DietaNotFoundException.class,
+                () -> service.atualizarDieta(request, 1L));
+
+        assertEquals("Dieta não encontrada.", errorMessage.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve excluir uma dieta")
+    void excluirDieta() {
+        Long id = 1L;
+
+        Mockito.when(repository.existsById(id))
+                .thenReturn(true);
+
+        service.excluirDieta(id);
+
+        Mockito.verify(repository).existsById(id);
+        Mockito.verify(repository).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro dieta não localizada quando tentar excluir dieta não cadastrada")
+    void excluirDietaNaoEncontrada() {
+        Mockito.when(repository.existsById(1L))
+                .thenReturn(false);
+
+        Exception errorMessage = assertThrows(DietaNotFoundException.class,
+                () -> service.excluirDieta(1L));
+
+        assertEquals("Dieta não encontrada.", errorMessage.getMessage());
+    }
 
 
-    List<DietaResponse> resultSemNomePaciente = service.listarDietasPorPaciente(null);
+    @Test
+    @DisplayName("Deve retornar lista de dietas quanto não for passado nome do paciente")
+    void listarTodasDietas() {
+        List<Dieta> dietaList = new ArrayList<>();
+        dietaList.add(dietaSalva1);
+        dietaList.add(dietaSalva2);
+
+        Mockito.when(repository.findAll())
+                .thenReturn(dietaList);
 
 
-    assertEquals(resultSemNomePaciente.size(), 2);
-  }
-
-  @Test
-  @DisplayName("Deve retornar lista de dietas quanto não for passado nome do paciente")
-  void listarDietasPorPaciente() {
-    List<Optional<Dieta>> optionalList = new ArrayList<>();
-    optionalList.add(Optional.of(dietaSalva1));
-    optionalList.add(Optional.of(dietaSalva2));
+        List<DietaResponse> resultSemNomePaciente = service.listarDietasPorPaciente(null);
 
 
-    Mockito.when(repository.findAllDietasByPacienteNome("Paciente 1"))
-            .thenReturn(optionalList);
+        assertEquals(resultSemNomePaciente.size(), 2);
+    }
 
-    List<DietaResponse> resultadoComNomePaciente = service.listarDietasPorPaciente("Paciente 1");
+    @Test
+    @DisplayName("Deve retornar lista de dietas quanto não for passado nome do paciente")
+    void listarDietasPorPaciente() {
+        List<Optional<Dieta>> optionalList = new ArrayList<>();
+        optionalList.add(Optional.of(dietaSalva1));
+        optionalList.add(Optional.of(dietaSalva2));
 
-    assertEquals(resultadoComNomePaciente.size(), 2);
-  }
+
+        Mockito.when(repository.findAllDietasByPacienteNome("Paciente 1"))
+                .thenReturn(optionalList);
+
+        List<DietaResponse> resultadoComNomePaciente = service.listarDietasPorPaciente("Paciente 1");
+
+        assertEquals(resultadoComNomePaciente.size(), 2);
+    }
 }
