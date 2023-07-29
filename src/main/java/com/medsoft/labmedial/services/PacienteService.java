@@ -17,11 +17,11 @@ public class PacienteService {
     public Paciente cadastrarPaciente(Paciente request) {
 
         this.repository.findByCpf(request.getCpf()).map(paciente -> {
-            throw new PacienteConflictExeception("Cpf Ja Cadastrado");
+            throw new PacienteConflictExeception("CPF já cadastrado!");
         });
 
         this.repository.findByEmail(request.getEmail()).map(paciente -> {
-            throw new PacienteConflictExeception("E-mail Ja Cadastrado");
+            throw new PacienteConflictExeception("E-mail já cadastrado!");
         });
 
         return repository.save(request);
@@ -44,21 +44,20 @@ public class PacienteService {
     public Boolean deletarPorId(Long id) {
 
         repository.findById(id)
-                .map( paciente -> {
+                .map(paciente -> {
                     repository.deleteById(id);
                     return true;
-                        })
+                })
                 .orElseThrow(() -> new PacienteNotFoundExeception("Paciente não encontrado!"));
 
         return false;
     }
 
-    public Paciente atualizarPaciente(Long id, Paciente request){
+    public Paciente atualizarPaciente(Long id, Paciente request) {
 
-        if(this.repository.existsById(id)){
+        if (this.repository.existsById(id)) {
             request.setId(id);
-            Paciente novoPaciente = this.repository.save(request);
-            return novoPaciente;
+            return this.repository.save(request);
         }
         throw new PacienteNotFoundExeception("Paciente não encontrado!");
 
