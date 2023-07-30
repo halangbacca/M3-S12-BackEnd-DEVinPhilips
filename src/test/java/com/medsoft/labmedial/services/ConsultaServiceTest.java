@@ -115,7 +115,7 @@ class ConsultaServiceTest {
         Mockito.when(repository.save(consultaAtualizadaMapped))
                 .thenReturn(consultaSalva1);
 
-        ConsultaResponse result = mapper.consultaToResponse(service.cadastrarConsulta(mapper.requestToConsulta(request)));
+        ConsultaResponse result = mapper.consultaToResponse(service.cadastrarConsulta(mapper.requestToConsulta(request),"123456789"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -143,7 +143,7 @@ class ConsultaServiceTest {
         Mockito.when(repository.save(consultaAtualizadaMapped))
                 .thenReturn(consultaSalva1);
 
-        ConsultaResponse result = mapper.consultaToResponse(service.atualizarConsulta(1L, mapper.requestToConsulta(request)));
+        ConsultaResponse result = mapper.consultaToResponse(service.atualizarConsulta(1L, mapper.requestToConsulta(request),"123456789"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -163,7 +163,7 @@ class ConsultaServiceTest {
     void cadastrarConsultaNaoLocalizada() {
 
         Exception errorMessage = assertThrows(ConsultaNotFoundExeception.class,
-                () -> service.atualizarConsulta(1L, mapper.requestToConsulta(request)));
+                () -> service.atualizarConsulta(1L, mapper.requestToConsulta(request),"123456789"));
 
         assertEquals("Consulta não encontrada!", errorMessage.getMessage());
     }
@@ -176,7 +176,7 @@ class ConsultaServiceTest {
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(consultaSalva1));
 
-        service.deletarPorId(id);
+        service.deletarPorId(id,"123456789");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -186,7 +186,7 @@ class ConsultaServiceTest {
     @DisplayName("Deve lançar erro consulta não localizada quando tentar excluir consulta não cadastrada")
     void excluirConsultaNaoEncontrada() {
         Exception errorMessage = assertThrows(ConsultaNotFoundExeception.class,
-                () -> service.deletarPorId(1L));
+                () -> service.deletarPorId(1L,"123456789"));
 
         assertEquals("Consulta não encontrada!", errorMessage.getMessage());
     }
