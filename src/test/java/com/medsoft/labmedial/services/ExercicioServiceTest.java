@@ -143,7 +143,7 @@ class ExercicioServiceTest {
         Mockito.when(mapper.exercicioToExercicioResponse(exercicioSalvo1))
                 .thenReturn(exercicioResponse);
 
-        ExercicioResponse result = service.cadastrarExercicio(request);
+        ExercicioResponse result = service.cadastrarExercicio(request,"1234567890");
 
         assertAll(
                 () -> assertNotNull(result),
@@ -166,7 +166,7 @@ class ExercicioServiceTest {
 
 
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.cadastrarExercicio(request));
+                () -> service.cadastrarExercicio(request, "1234567890"));
 
         assertEquals("Paciente não encontrado.", errorMessage.getMessage());
     }
@@ -186,7 +186,7 @@ class ExercicioServiceTest {
         Mockito.when(repository.save(exercicioAtualizadaMapped))
                 .thenReturn(exercicioSalvo1);
 
-        ExercicioResponse result = service.atualizarExercicio(request, 1L);
+        ExercicioResponse result = service.atualizarExercicio(request, 1L, "1234567890");
 
         assertAll(
                 () -> assertNotNull(result),
@@ -208,7 +208,7 @@ class ExercicioServiceTest {
                 .thenReturn(Optional.empty());
 
         Exception errorMessage = assertThrows(ExercicioNotFoundException.class,
-                () -> service.atualizarExercicio(request, 1L));
+                () -> service.atualizarExercicio(request, 1L, "1234567890"));
 
         assertEquals("Exercício não encontrado.", errorMessage.getMessage());
     }
@@ -221,7 +221,7 @@ class ExercicioServiceTest {
         Mockito.when(repository.existsById(id))
                 .thenReturn(true);
 
-        service.excluirExercicio(id);
+        service.excluirExercicio(id, "1234567890");
 
         Mockito.verify(repository).existsById(id);
         Mockito.verify(repository).deleteById(id);
@@ -234,7 +234,7 @@ class ExercicioServiceTest {
                 .thenReturn(false);
 
         Exception errorMessage = assertThrows(ExercicioNotFoundException.class,
-                () -> service.excluirExercicio(1L));
+                () -> service.excluirExercicio(1L, "1234567890"));
 
         assertEquals("Exercício não encontrado.", errorMessage.getMessage());
     }

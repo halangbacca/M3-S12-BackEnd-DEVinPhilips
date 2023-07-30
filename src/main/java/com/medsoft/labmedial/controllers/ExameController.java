@@ -32,14 +32,15 @@ public class ExameController {
     }
 
     @PostMapping()
-    public ResponseEntity<ExameResponse> cadastrarExame(@Valid @RequestBody ExameRequest request) {
+    public ResponseEntity<ExameResponse> cadastrarExame(@Valid @RequestBody ExameRequest request,
+                                                        @RequestHeader(value = "Authorization") String authorization) {
 
         Exame exame = ExameMapper.INSTANCE.requestToExame(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
         if (paciente != null) {
             exame.setPaciente(paciente);
-            Exame newExame = service.cadastrarExame(exame);
+            Exame newExame = service.cadastrarExame(exame, authorization);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ExameMapper.INSTANCE.exameToResponse(newExame));
@@ -69,9 +70,10 @@ public class ExameController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<Object> deletarPorId(@PathVariable Long id,
+                                               @RequestHeader(value = "Authorization") String authorization) {
 
-        if (service.deletarPorId(id)) {
+        if (service.deletarPorId(id, authorization)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
@@ -79,14 +81,15 @@ public class ExameController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ExameResponse> atualizarExame(@PathVariable Long id,
-                                                        @Valid @RequestBody ExameRequest request) {
+                                                        @Valid @RequestBody ExameRequest request,
+                                                        @RequestHeader(value = "Authorization") String authorization) {
 
         Exame exame = ExameMapper.INSTANCE.requestToExame(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
         if (paciente != null) {
             exame.setPaciente(paciente);
-            Exame newExame = service.atualizarExame(id, exame);
+            Exame newExame = service.atualizarExame(id, exame, authorization);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ExameMapper.INSTANCE.exameToResponse(newExame));

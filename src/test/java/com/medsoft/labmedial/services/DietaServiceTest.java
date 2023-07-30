@@ -141,7 +141,7 @@ class DietaServiceTest {
         Mockito.when(mapper.dietaToDietaResponse(dietaSalva1))
                 .thenReturn(dietaResponse);
 
-        DietaResponse result = service.cadastrarDieta(request);
+        DietaResponse result = service.cadastrarDieta(request,"1234567890");
 
         assertAll(
                 () -> assertNotNull(result),
@@ -164,7 +164,7 @@ class DietaServiceTest {
 
 
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.cadastrarDieta(request));
+                () -> service.cadastrarDieta(request,"1234567890"));
 
         assertEquals("Paciente não encontrado.", errorMessage.getMessage());
     }
@@ -184,7 +184,7 @@ class DietaServiceTest {
         Mockito.when(repository.save(dietaAtualizadaMapped))
                 .thenReturn(dietaSalva1);
 
-        DietaResponse result = service.atualizarDieta(request, 1L);
+        DietaResponse result = service.atualizarDieta(request, 1L,"1234567890");
 
         assertAll(
                 () -> assertNotNull(result),
@@ -206,7 +206,7 @@ class DietaServiceTest {
                 .thenReturn(Optional.empty());
 
         Exception errorMessage = assertThrows(DietaNotFoundException.class,
-                () -> service.atualizarDieta(request, 1L));
+                () -> service.atualizarDieta(request, 1L,"1234567890"));
 
         assertEquals("Dieta não encontrada.", errorMessage.getMessage());
     }
@@ -219,7 +219,7 @@ class DietaServiceTest {
         Mockito.when(repository.existsById(id))
                 .thenReturn(true);
 
-        service.excluirDieta(id);
+        service.excluirDieta(id,"1234567890");
 
         Mockito.verify(repository).existsById(id);
         Mockito.verify(repository).deleteById(id);
@@ -232,7 +232,7 @@ class DietaServiceTest {
                 .thenReturn(false);
 
         Exception errorMessage = assertThrows(DietaNotFoundException.class,
-                () -> service.excluirDieta(1L));
+                () -> service.excluirDieta(1L, "1234567890"));
 
         assertEquals("Dieta não encontrada.", errorMessage.getMessage());
     }

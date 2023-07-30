@@ -26,16 +26,18 @@ public class ExercicioController {
 
     @PostMapping
     public ResponseEntity<ExercicioResponse> cadastrarExercicio(@Valid
-                                                                @RequestBody ExercicioRequest request) {
-        ExercicioResponse exercicioSalvo = service.cadastrarExercicio(request);
+                                                                @RequestBody ExercicioRequest request,
+        @RequestHeader(value = "Authorization") String authorization) {
+    ExercicioResponse exercicioSalvo = service.cadastrarExercicio(request, authorization);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(exercicioSalvo);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ExercicioResponse> atualizarExercicio(@Valid @RequestBody ExercicioRequest request,
-                                                                @PathVariable Long id) {
-        ExercicioResponse exercicioEditado = service.atualizarExercicio(request, id);
+                                                                @PathVariable Long id,
+        @RequestHeader(value = "Authorization") String authorization) {
+    ExercicioResponse exercicioEditado = service.atualizarExercicio(request, id, authorization);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(exercicioEditado);
     }
@@ -61,8 +63,9 @@ public class ExercicioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Any> excluirExercicio(@PathVariable Long id) {
-        service.excluirExercicio(id);
+    public ResponseEntity<Any> excluirExercicio(@PathVariable Long id,
+        @RequestHeader(value = "Authorization") String authorization) {
+    service.excluirExercicio(id,authorization);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(null);
     }

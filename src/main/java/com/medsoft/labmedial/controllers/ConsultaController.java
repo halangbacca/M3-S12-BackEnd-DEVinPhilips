@@ -29,14 +29,15 @@ public class ConsultaController {
     private PacienteService servicePaciente;
 
     @PostMapping()
-    public ResponseEntity<ConsultaResponse> cadastrarExame(@Valid @RequestBody ConsultaRequest request) {
+    public ResponseEntity<ConsultaResponse> cadastrarExame(@Valid @RequestBody ConsultaRequest request,
+                                                           @RequestHeader(value = "Authorization") String authorization) {
 
         Consulta consulta = ConsultaMapper.INSTANCE.requestToConsulta(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
         if(paciente != null){
             consulta.setPaciente(paciente);
-            Consulta newConsulta = service.cadastrarConsulta(consulta);
+            Consulta newConsulta = service.cadastrarConsulta(consulta, authorization);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ConsultaMapper.INSTANCE.consultaToResponse(newConsulta));
@@ -66,9 +67,10 @@ public class ConsultaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<Object> deletarPorId(@PathVariable Long id,
+                                               @RequestHeader(value = "Authorization") String authorization) {
 
-        if(service.deletarPorId(id)){
+        if(service.deletarPorId(id, authorization)){
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
@@ -76,14 +78,15 @@ public class ConsultaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ConsultaResponse> atualizarConsulta(@PathVariable Long id,
-                                                              @Valid @RequestBody ConsultaRequest request ){
+                                                              @Valid @RequestBody ConsultaRequest request,
+                                                              @RequestHeader(value = "Authorization") String authorization){
 
         Consulta consulta = ConsultaMapper.INSTANCE.requestToConsulta(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
         if(paciente != null){
             consulta.setPaciente(paciente);
-            Consulta newConsulta = service.atualizarConsulta(id, consulta);
+            Consulta newConsulta = service.atualizarConsulta(id, consulta, authorization);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ConsultaMapper.INSTANCE.consultaToResponse(newConsulta));

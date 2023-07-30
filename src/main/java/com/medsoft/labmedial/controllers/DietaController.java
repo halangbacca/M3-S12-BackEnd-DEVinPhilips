@@ -26,16 +26,18 @@ public class DietaController {
     }
 
     @PostMapping
-    public ResponseEntity<DietaResponse> cadastrarDieta(@Valid @RequestBody DietaRequest request) {
-        DietaResponse dietaSalva = service.cadastrarDieta(request);
+    public ResponseEntity<DietaResponse> cadastrarDieta(@Valid @RequestBody DietaRequest request,
+        @RequestHeader(value = "Authorization") String authorization) {
+      DietaResponse dietaSalva = service.cadastrarDieta(request, authorization);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(dietaSalva);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<DietaResponse> atualizarDieta(@Valid @RequestBody DietaRequest request,
-                                                        @PathVariable Long id) {
-        DietaResponse dietaEditada = service.atualizarDieta(request, id);
+                                                        @PathVariable Long id,
+        @RequestHeader(value = "Authorization") String authorization) {
+    DietaResponse dietaEditada = service.atualizarDieta(request, id, authorization);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(dietaEditada);
     }
@@ -61,8 +63,9 @@ public class DietaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Any> excluirDieta(@PathVariable Long id) {
-        service.excluirDieta(id);
+    public ResponseEntity<Any> excluirDieta(@PathVariable Long id,
+        @RequestHeader(value = "Authorization") String authorization) {
+    service.excluirDieta(id, authorization);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(null);
     }

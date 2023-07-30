@@ -20,10 +20,11 @@ public class PacienteController {
     private PacienteService service;
 
     @PostMapping()
-    public ResponseEntity<PacienteResponse> cadastrarPaciente( @Valid @RequestBody PacienteRequest request) {
+    public ResponseEntity<PacienteResponse> cadastrarPaciente( @Valid @RequestBody PacienteRequest request,
+                                                               @RequestHeader(value = "Authorization") String authorization) {
         Paciente paciente = new Paciente(request);
 
-        PacienteResponse novoPaciente = new PacienteResponse(service.cadastrarPaciente(paciente));
+        PacienteResponse novoPaciente = new PacienteResponse(service.cadastrarPaciente(paciente, authorization));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(novoPaciente);
@@ -50,9 +51,10 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PacienteResponse> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<PacienteResponse> deletarPorId(@PathVariable Long id,
+                                                         @RequestHeader(value = "Authorization") String authorization) {
 
-        PacienteResponse pacienteResponse = new PacienteResponse(service.deletarPorId(id));
+        PacienteResponse pacienteResponse = new PacienteResponse(service.deletarPorId(id, authorization));
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pacienteResponse);
@@ -60,11 +62,12 @@ public class PacienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PacienteResponse> atualizarPaciente(@PathVariable Long id,
-                                                              @Valid @RequestBody PacienteRequest request ){
+                                                              @Valid @RequestBody PacienteRequest request,
+                                                              @RequestHeader(value = "Authorization") String authorization){
 
         Paciente paciente = new Paciente(request);
 
-        PacienteResponse novoPaciente = new PacienteResponse(service.atualizarPaciente(id, paciente));
+        PacienteResponse novoPaciente = new PacienteResponse(service.atualizarPaciente(id, paciente, authorization));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(novoPaciente);

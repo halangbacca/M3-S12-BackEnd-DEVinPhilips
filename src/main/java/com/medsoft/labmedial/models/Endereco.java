@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "ENDERECO")
@@ -20,6 +21,7 @@ public class Endereco {
 
     @OneToOne(mappedBy = "endereco")
     @JsonIgnore
+    @ToString.Exclude
     private Paciente paciente;
 
     @Column(name = "CEP")
