@@ -6,6 +6,7 @@ import com.medsoft.labmedial.models.Consulta;
 import com.medsoft.labmedial.models.Dieta;
 import com.medsoft.labmedial.models.Ocorrencia;
 import com.medsoft.labmedial.repositories.ConsultaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
