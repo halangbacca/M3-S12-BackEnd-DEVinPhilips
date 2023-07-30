@@ -4,6 +4,7 @@ package com.medsoft.labmedial.controllers;
 import com.medsoft.labmedial.dtos.request.LoginRequest;
 import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
+import com.medsoft.labmedial.dtos.response.IdUsuarioResponse;
 import com.medsoft.labmedial.dtos.response.LoginResponse;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
 import com.medsoft.labmedial.exceptions.UsuarioExeception;
@@ -140,6 +141,17 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.OK).body(null);
         }
         return null;
+    }
+
+    @GetMapping("/obter_id/{email}")
+    public ResponseEntity<IdUsuarioResponse> buscarPorEmail (@PathVariable String email) {
+        Optional<Usuario> usuario = this.service.buscarEmail(email);
+        if (usuario.isPresent()) {
+            IdUsuarioResponse id = new IdUsuarioResponse(usuario.get().getId());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id);
+        } else {
+            throw new UsuarioExeception("Usuário não encontrado");
+        }
     }
 
 }
