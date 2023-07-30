@@ -1,5 +1,6 @@
 package com.medsoft.labmedial.services;
 
+import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.dtos.request.UsuarioRequest;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
 import com.medsoft.labmedial.enums.NivelUsuario;
@@ -44,6 +45,8 @@ class UsuarioServiceTest {
     private UsuarioService service;
 
     private UsuarioRequest request;
+
+    private SenhaRequest senhaRequest;
     private Usuario usuario;
     private Usuario usuarioSalvo1;
     private Usuario usuarioSalvo2;
@@ -104,6 +107,12 @@ class UsuarioServiceTest {
                 "teste",
                 NivelUsuario.ADMINISTRADOR,
                 true
+        );
+
+        senhaRequest = new SenhaRequest(
+                1L,
+                "halan@email.com",
+                "123456789"
         );
     }
 
@@ -239,7 +248,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar usuário não encontrado quando tentar alterar a senha de um usuário não cadastrado")
     void alterarSenhaUsuarioNaoEncontrado() {
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.resetarSenha(1L, usuarioSalvo1));
+                () -> service.resetarSenha(1L, senhaRequest));
 
         assertEquals("Usuário não encontrado!", errorMessage.getMessage());
     }
