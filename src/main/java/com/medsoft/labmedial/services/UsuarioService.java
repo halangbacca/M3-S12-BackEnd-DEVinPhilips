@@ -2,9 +2,11 @@ package com.medsoft.labmedial.services;
 
 import com.medsoft.labmedial.enums.TipoOcorrencia;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
+import com.medsoft.labmedial.exceptions.UsuarioExeception;
 import com.medsoft.labmedial.models.Ocorrencia;
 import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.UsuarioRepository;
+import com.medsoft.labmedial.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,16 +22,21 @@ public class UsuarioService {
     @Autowired
     private OcorrenciaService ocorrenciaService;
 
-    public Usuario cadastrarUsuario(Usuario request) {
+    @Autowired
+    private JWTUtil jwtUtil;
+
+    public Usuario cadastrarUsuario(Usuario request, String token) {
 
         Usuario usuario = repository.save(request);
 
-        ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", usuario.getId(),
-                usuario.toString(), null, new Date(), null, TipoOcorrencia.INSERT));
+        if(token!=null){
+            String nomeUsuario = buscarUsuarioToken(token).getNome();
 
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", usuario.getId(),
+                    usuario.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.INSERT));
+        }
 
         return usuario;
-
     }
 
     public List<Usuario> listarUsuarios() {
@@ -45,13 +52,15 @@ public class UsuarioService {
 
     }
 
-    public Boolean deletarPorId(Long id) {
+    public Boolean deletarPorId(Long id, String token) {
 
         repository.findById(id)
                 .map(usuario -> {
 
+                    String nomeUsuario = buscarUsuarioToken(token).getNome();
+
                     ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", usuario.getId(),
-                            usuario.toString(), null, new Date(), null, TipoOcorrencia.DELETE));
+                            usuario.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.DELETE));
 
                     repository.deleteById(id);
                     return true;
@@ -61,13 +70,16 @@ public class UsuarioService {
         return false;
     }
 
-    public Usuario atualizarUsuario(Long id, Usuario request) {
+    public Usuario atualizarUsuario(Long id, Usuario request, String token) {
 
         if (this.repository.existsById(id)) {
 
             Usuario oldUsuario = buscarPorId(id);
+
+            String nomeUsuario = buscarUsuarioToken(token).getNome();
+
             ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", id,
-                    request.toString(), oldUsuario.toString(), new Date(), null, TipoOcorrencia.UPDATE));
+                    request.toString(), oldUsuario.toString(), new Date(), nomeUsuario, TipoOcorrencia.UPDATE));
 
             request.setId(id);
             Usuario novoUsuario = this.repository.save(request);
@@ -94,5 +106,19 @@ public class UsuarioService {
         return null;
 
     }
+
+    public Usuario buscarUsuarioToken(String autorization){
+        String token = autorization.substring(7);
+        String email = jwtUtil.validateTokenAndRetrieveSubject(token);
+
+        Optional<Usuario> usuario = buscarEmail(email);
+
+        if(usuario.isEmpty()){
+            throw  new UsuarioExeception("Usuário não encontrado");
+        }
+
+        return usuario.get();
+    }
+
 
 }

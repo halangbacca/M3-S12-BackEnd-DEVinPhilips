@@ -29,16 +29,17 @@ public class MedicamentoController {
     private PacienteService servicePaciente;
 
     @PostMapping()
-    public ResponseEntity<MedicamentoResponse> cadastrarExame(@Valid @RequestBody MedicamentoRequest request) {
+    public ResponseEntity<MedicamentoResponse> cadastrarExame(@Valid @RequestBody MedicamentoRequest request,
+                                                              @RequestHeader(value = "Authorization") String authorization) {
 
-        Medicamento medicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request));
+        Medicamento medicamento = service.cadastrarMedicamento(MedicamentoMapper.INSTANCE.requestToMedicamento(request), authorization);
 
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
         if (paciente != null) {
             medicamento.setPaciente(paciente);
             medicamento.setSituacao(true);
-            Medicamento novoMedicamento = service.cadastrarMedicamento(medicamento);
+            Medicamento novoMedicamento = service.cadastrarMedicamento(medicamento, authorization);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(novoMedicamento));
@@ -63,9 +64,10 @@ public class MedicamentoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<Object> deletarPorId(@PathVariable Long id,
+                                               @RequestHeader(value = "Authorization") String authorization) {
 
-        if (service.deletarPorId(id)) {
+        if (service.deletarPorId(id,authorization)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
@@ -73,7 +75,8 @@ public class MedicamentoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<MedicamentoResponse> atualizarMedicamento(@PathVariable Long id,
-                                                                    @Valid @RequestBody MedicamentoRequest request) {
+                                                                    @Valid @RequestBody MedicamentoRequest request,
+                                                                    @RequestHeader(value = "Authorization") String authorization) {
 
         Medicamento medicamentoEditado = service.buscarPorId(id);
 
@@ -82,7 +85,7 @@ public class MedicamentoController {
         if (paciente != null) {
             medicamentoEditado.setPaciente(paciente);
             medicamentoEditado.setSituacao(true);
-            service.atualizarMedicamento(id, MedicamentoMapper.INSTANCE.requestToMedicamento(request));
+            service.atualizarMedicamento(id, MedicamentoMapper.INSTANCE.requestToMedicamento(request), authorization);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(medicamentoEditado));

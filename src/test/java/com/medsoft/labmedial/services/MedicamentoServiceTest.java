@@ -120,7 +120,7 @@ class MedicamentoServiceTest {
         Mockito.when(repository.save(medicamentoAtualizadoMapped))
                 .thenReturn(medicamentoSalvo1);
 
-        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.cadastrarMedicamento(mapper.requestToMedicamento(request)));
+        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.cadastrarMedicamento(mapper.requestToMedicamento(request),"1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -148,7 +148,7 @@ class MedicamentoServiceTest {
         Mockito.when(repository.save(medicamentoAtualizadoMapped))
                 .thenReturn(medicamentoSalvo1);
 
-        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.atualizarMedicamento(1L, mapper.requestToMedicamento(request)));
+        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.atualizarMedicamento(1L, mapper.requestToMedicamento(request),"1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -168,7 +168,7 @@ class MedicamentoServiceTest {
     void cadastrarMedicamentoNaoLocalizado() {
 
         Exception errorMessage = assertThrows(MedicamentoNotFoundExeception.class,
-                () -> service.atualizarMedicamento(1L, mapper.requestToMedicamento(request)));
+                () -> service.atualizarMedicamento(1L, mapper.requestToMedicamento(request),"1234567890"));
 
         assertEquals("Medicamento não encontrado!", errorMessage.getMessage());
     }
@@ -181,7 +181,7 @@ class MedicamentoServiceTest {
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(medicamentoSalvo1));
 
-        service.deletarPorId(id);
+        service.deletarPorId(id, "1234567890");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -191,7 +191,7 @@ class MedicamentoServiceTest {
     @DisplayName("Deve lançar erro medicamento não localizado quando tentar excluir medicamento não cadastrado")
     void excluirMedicamentoNaoEncontrado() {
         Exception errorMessage = assertThrows(MedicamentoNotFoundExeception.class,
-                () -> service.deletarPorId(1L));
+                () -> service.deletarPorId(1L, "1234567890"));
 
         assertEquals("Medicamento não encontrado!", errorMessage.getMessage());
     }

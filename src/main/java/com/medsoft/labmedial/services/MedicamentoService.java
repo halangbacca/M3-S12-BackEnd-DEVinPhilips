@@ -2,15 +2,19 @@ package com.medsoft.labmedial.services;
 
 import com.medsoft.labmedial.dtos.response.DietaResponse;
 import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
+import com.medsoft.labmedial.enums.TipoOcorrencia;
 import com.medsoft.labmedial.exceptions.MedicamentoNotFoundExeception;
 import com.medsoft.labmedial.mapper.DietaMapper;
 import com.medsoft.labmedial.mapper.MedicamentoMapper;
 import com.medsoft.labmedial.models.Dieta;
 import com.medsoft.labmedial.models.Medicamento;
+import com.medsoft.labmedial.models.Ocorrencia;
+import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.repositories.MedicamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,9 +25,23 @@ public class MedicamentoService {
     @Autowired
     private MedicamentoRepository repository;
 
-    public Medicamento cadastrarMedicamento(Medicamento request) {
+    @Autowired
+    private OcorrenciaService ocorrenciaService;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    public Medicamento cadastrarMedicamento(Medicamento request, String token) {
         request.setSituacao(true);
-        return repository.save(request);
+
+        Medicamento medicamento = repository.save(request);
+
+        String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
+
+        ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "MEDICAMENTO", medicamento.getId(),
+                request.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.INSERT));
+
+        return medicamento;
     }
 
     public Medicamento buscarPorId(Long id) {
@@ -33,10 +51,15 @@ public class MedicamentoService {
 
     }
 
-    public Boolean deletarPorId(Long id) {
+    public Boolean deletarPorId(Long id, String token) {
 
         repository.findById(id)
                 .map(medicamento -> {
+                    String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
+
+                    ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "MEDICAMENTO", medicamento.getId(),
+                            medicamento.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.DELETE));
+
                     repository.deleteById(id);
                     return true;
                 })
@@ -45,10 +68,16 @@ public class MedicamentoService {
         return false;
     }
 
-    public Medicamento atualizarMedicamento(Long id, Medicamento request) {
+    public Medicamento atualizarMedicamento(Long id, Medicamento request, String token) {
         if (this.repository.existsById(id)) {
             request.setSituacao(true);
             request.setId(id);
+            Medicamento oldMedicamento = buscarPorId(id);
+
+            String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
+
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "MEDICAMENTO", id,
+                    request.toString(), oldMedicamento.toString(), new Date(), nomeUsuario, TipoOcorrencia.UPDATE));
             return this.repository.save(request);
         }
         throw new MedicamentoNotFoundExeception("Medicamento não encontrado!");

@@ -44,7 +44,8 @@ public class UsuarioController {
     }
 
     @PostMapping()
-    public ResponseEntity<Object> cadastrarUsuario(@Valid @RequestBody UsuarioRequest request) {
+    public ResponseEntity<Object> cadastrarUsuario(@Valid @RequestBody UsuarioRequest request,
+                                                   @RequestHeader(value = "Authorization", required=false) String authorization) {
 
         Optional<Usuario> optUsuario = this.service.buscarEmail(request.email());
 
@@ -56,7 +57,7 @@ public class UsuarioController {
 
         String encodedPass = passwordEncoder.encode(request.senha());
         usuario.setSenha(encodedPass);
-        Usuario newUsuario = service.cadastrarUsuario(usuario);
+        Usuario newUsuario = service.cadastrarUsuario(usuario, authorization);
         String token = jwtUtil.generateToken(newUsuario);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -83,9 +84,10 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
+    public ResponseEntity<Object> deletarPorId(@PathVariable Long id,
+                                               @RequestHeader(value = "Authorization") String authorization) {
 
-        if (service.deletarPorId(id)) {
+        if (service.deletarPorId(id, authorization)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
@@ -93,9 +95,10 @@ public class UsuarioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponse> atualizarUsuario(@PathVariable Long id,
-                                                            @Valid @RequestBody UsuarioRequest request) {
+                                                            @Valid @RequestBody UsuarioRequest request,
+                                                            @RequestHeader(value = "Authorization") String authorization ) {
 
-        Usuario novoUsuario = service.atualizarUsuario(id, UsuarioMapper.INSTANCE.requestToUsuario(request));
+        Usuario novoUsuario = service.atualizarUsuario(id, UsuarioMapper.INSTANCE.requestToUsuario(request), authorization);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(UsuarioMapper.INSTANCE.usuarioToResponse(novoUsuario));

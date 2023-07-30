@@ -120,7 +120,7 @@ class ExameServiceTest {
         Mockito.when(repository.save(exameAtualizadoMapped))
                 .thenReturn(exameSalvo1);
 
-        ExameResponse result = mapper.exameToResponse(service.cadastrarExame(mapper.requestToExame(request)));
+        ExameResponse result = mapper.exameToResponse(service.cadastrarExame(mapper.requestToExame(request),"1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -147,7 +147,7 @@ class ExameServiceTest {
         Mockito.when(repository.save(exameAtualizadoMapped))
                 .thenReturn(exameSalvo1);
 
-        ExameResponse result = mapper.exameToResponse(service.atualizarExame(1L, mapper.requestToExame(request)));
+        ExameResponse result = mapper.exameToResponse(service.atualizarExame(1L, mapper.requestToExame(request),"1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -166,7 +166,7 @@ class ExameServiceTest {
     void cadastrarExameNaoLocalizado() {
 
         Exception errorMessage = assertThrows(ExameNotFoundException.class,
-                () -> service.atualizarExame(1L, mapper.requestToExame(request)));
+                () -> service.atualizarExame(1L, mapper.requestToExame(request),"1234567890"));
 
         assertEquals("Exame não encontrado!", errorMessage.getMessage());
     }
@@ -179,7 +179,7 @@ class ExameServiceTest {
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(exameSalvo1));
 
-        service.deletarPorId(id);
+        service.deletarPorId(id,"1234567890");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -189,7 +189,7 @@ class ExameServiceTest {
     @DisplayName("Deve lançar erro exame não localizado quando tentar excluir exame não cadastrado")
     void excluirExameNaoEncontrado() {
         Exception errorMessage = assertThrows(ExameNotFoundException.class,
-                () -> service.deletarPorId(1L));
+                () -> service.deletarPorId(1L,"1234567890"));
 
         assertEquals("Exame não encontrado!", errorMessage.getMessage());
     }

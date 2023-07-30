@@ -40,6 +40,7 @@ public class Exercicio {
 
     @ManyToOne
     @JoinColumn(name = "IDPACIENTE")
+    @ToString.Exclude
     private Paciente paciente;
 
     @Column(name = "SITUACAO")

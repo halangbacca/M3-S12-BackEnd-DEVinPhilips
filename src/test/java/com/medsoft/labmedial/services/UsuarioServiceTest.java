@@ -7,6 +7,7 @@ import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.mapper.UsuarioMapper;
 import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.UsuarioRepository;
+import com.medsoft.labmedial.security.JWTUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class UsuarioServiceTest {
 
     @Mock
     OcorrenciaService ocorrenciaService;
+
+    @Mock
+    JWTUtil jwtUtil ;
 
     @InjectMocks
     private UsuarioService service;
@@ -115,7 +119,7 @@ class UsuarioServiceTest {
         Mockito.when(repository.save(usuarioAtualizadoMapped))
                 .thenReturn(usuarioSalvo1);
 
-        UsuarioResponse result = mapper.usuarioToResponse(service.cadastrarUsuario(mapper.requestToUsuario(request)));
+        UsuarioResponse result = mapper.usuarioToResponse(service.cadastrarUsuario(mapper.requestToUsuario(request),"1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -146,7 +150,7 @@ class UsuarioServiceTest {
         Mockito.when(repository.save(usuarioAtualizadoMapped))
                 .thenReturn(usuarioSalvo1);
 
-        UsuarioResponse result = mapper.usuarioToResponse(service.atualizarUsuario(1L, mapper.requestToUsuario(request)));
+        UsuarioResponse result = mapper.usuarioToResponse(service.atualizarUsuario(1L, mapper.requestToUsuario(request),"1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -166,7 +170,7 @@ class UsuarioServiceTest {
     void cadastrarUsuarioNaoLocalizado() {
 
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.atualizarUsuario(1L, mapper.requestToUsuario(request)));
+                () -> service.atualizarUsuario(1L, mapper.requestToUsuario(request),"1234567890"));
 
         assertEquals("Usuário não encontrado!", errorMessage.getMessage());
     }
@@ -179,7 +183,7 @@ class UsuarioServiceTest {
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(usuarioSalvo1));
 
-        service.deletarPorId(id);
+        service.deletarPorId(id,"1234567890");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -189,7 +193,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar erro usuário não localizado quando tentar excluir usuário não cadastrado")
     void excluirUsuarioNaoEncontrado() {
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.deletarPorId(1L));
+                () -> service.deletarPorId(1L,"123456"));
 
         assertEquals("Usuário não encontrado!", errorMessage.getMessage());
     }
