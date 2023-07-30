@@ -1,9 +1,10 @@
 package com.medsoft.labmedial.services;
 
+import com.medsoft.labmedial.dtos.response.ConsultaResponse;
 import com.medsoft.labmedial.enums.TipoOcorrencia;
 import com.medsoft.labmedial.exceptions.ConsultaNotFoundExeception;
+import com.medsoft.labmedial.mapper.ConsultaMapper;
 import com.medsoft.labmedial.models.Consulta;
-import com.medsoft.labmedial.models.Dieta;
 import com.medsoft.labmedial.models.Ocorrencia;
 import com.medsoft.labmedial.repositories.ConsultaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ConsultaService {
 
-    private final ConsultaRepository repository;
+    @Autowired
+    private ConsultaRepository repository;
 
     public ConsultaService(ConsultaRepository repository) {
         this.repository = repository;
@@ -47,7 +50,7 @@ public class ConsultaService {
         if (nomePaciente == null) {
             return repository.findAll();
         } else {
-            return repository.findAllDietasByPacienteNome(nomePaciente);
+            return repository.findAllConsultasByPacienteNome(nomePaciente);
         }
     }
 
@@ -58,7 +61,7 @@ public class ConsultaService {
 
     }
 
-    public Boolean deletarPorId(Long id,String token) {
+    public Boolean deletarPorId(Long id, String token) {
 
         repository.findById(id)
                 .map(consulta -> {
@@ -94,5 +97,13 @@ public class ConsultaService {
         }
         throw new ConsultaNotFoundExeception("Consulta não encontrada!");
 
+    }
+
+    public List<ConsultaResponse> listarConsultasPorPacienteId(Long id) {
+        List<Optional<Consulta>> consultas = repository.findAllConsultasByPacienteId(id);
+        return consultas.stream()
+                .map(ConsultaMapper.INSTANCE::optionalConsultaToConsulta)
+                .map(ConsultaMapper.INSTANCE::consultaToResponse)
+                .collect(Collectors.toList());
     }
 }

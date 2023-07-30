@@ -35,7 +35,7 @@ public class ConsultaController {
         Consulta consulta = ConsultaMapper.INSTANCE.requestToConsulta(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
-        if(paciente != null){
+        if (paciente != null) {
             consulta.setPaciente(paciente);
             Consulta newConsulta = service.cadastrarConsulta(consulta, authorization);
 
@@ -66,11 +66,18 @@ public class ConsultaController {
                 .body(ConsultaMapper.INSTANCE.consultaToResponse(service.buscarPorId(id)));
     }
 
+    @GetMapping("/paciente/{id}")
+    public ResponseEntity<List<ConsultaResponse>> buscarPorPacienteId(@PathVariable Long id) {
+        List<ConsultaResponse> consultaResponse = service.listarConsultasPorPacienteId(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(consultaResponse);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id,
                                                @RequestHeader(value = "Authorization") String authorization) {
 
-        if(service.deletarPorId(id, authorization)){
+        if (service.deletarPorId(id, authorization)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
         }
         return null;
@@ -79,12 +86,12 @@ public class ConsultaController {
     @PutMapping("/{id}")
     public ResponseEntity<ConsultaResponse> atualizarConsulta(@PathVariable Long id,
                                                               @Valid @RequestBody ConsultaRequest request,
-                                                              @RequestHeader(value = "Authorization") String authorization){
+                                                              @RequestHeader(value = "Authorization") String authorization) {
 
         Consulta consulta = ConsultaMapper.INSTANCE.requestToConsulta(request);
         Paciente paciente = servicePaciente.buscarPorId(request.idPaciente());
 
-        if(paciente != null){
+        if (paciente != null) {
             consulta.setPaciente(paciente);
             Consulta newConsulta = service.atualizarConsulta(id, consulta, authorization);
 

@@ -1,9 +1,10 @@
 package com.medsoft.labmedial.services;
 
+import com.medsoft.labmedial.dtos.response.ExameResponse;
 import com.medsoft.labmedial.enums.TipoOcorrencia;
 import com.medsoft.labmedial.exceptions.ExameNotFoundException;
+import com.medsoft.labmedial.mapper.ExameMapper;
 import com.medsoft.labmedial.models.Exame;
-import com.medsoft.labmedial.models.Exercicio;
 import com.medsoft.labmedial.models.Ocorrencia;
 import com.medsoft.labmedial.repositories.ExameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ExameService {
@@ -42,7 +44,7 @@ public class ExameService {
         if (nomePaciente == null) {
             return repository.findAll();
         } else {
-            return repository.findAllDietasByPacienteNome(nomePaciente);
+            return repository.findAllExamesByPacienteNome(nomePaciente);
         }
     }
 
@@ -80,12 +82,20 @@ public class ExameService {
             String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
 
             ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXAME", id,
-                    novoExame.toString(),odExame.get().toString() , new Date(), nomeUsuario, TipoOcorrencia.UPDATE));
+                    novoExame.toString(), odExame.get().toString(), new Date(), nomeUsuario, TipoOcorrencia.UPDATE));
 
             return novoExame;
         }
         throw new ExameNotFoundException("Exame não encontrado!");
 
+    }
+
+    public List<ExameResponse> listarExamesPorPacienteId(Long id) {
+        List<Optional<Exame>> exames = repository.findAllExamesByPacienteId(id);
+        return exames.stream()
+                .map(ExameMapper.INSTANCE::optionalExameToExame)
+                .map(ExameMapper.INSTANCE::exameToResponse)
+                .collect(Collectors.toList());
     }
 
 }

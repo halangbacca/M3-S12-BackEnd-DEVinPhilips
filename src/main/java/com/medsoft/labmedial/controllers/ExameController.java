@@ -69,6 +69,13 @@ public class ExameController {
                 .body(ExameMapper.INSTANCE.exameToResponse(service.buscarPorId(id)));
     }
 
+    @GetMapping("/paciente/{id}")
+    public ResponseEntity<List<ExameResponse>> buscarPorPacienteId(@PathVariable Long id) {
+        List<ExameResponse> exameResponse = service.listarExamesPorPacienteId(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(exameResponse);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id,
                                                @RequestHeader(value = "Authorization") String authorization) {
