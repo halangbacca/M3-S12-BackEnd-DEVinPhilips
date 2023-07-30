@@ -201,7 +201,7 @@ class ConsultaServiceTest {
         Mockito.when(repository.findAll())
                 .thenReturn(consultasList);
 
-        List<Consulta> result = service.listarConsultas();
+        List<Consulta> result = service.listarConsultas(null);
 
         assertEquals(result.size(), 2);
     }

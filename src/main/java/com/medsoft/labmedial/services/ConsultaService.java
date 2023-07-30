@@ -3,7 +3,6 @@ package com.medsoft.labmedial.services;
 import com.medsoft.labmedial.exceptions.ConsultaNotFoundExeception;
 import com.medsoft.labmedial.models.Consulta;
 import com.medsoft.labmedial.repositories.ConsultaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class ConsultaService {
 
-    @Autowired
-    private ConsultaRepository repository;
+    private final ConsultaRepository repository;
+
+    public ConsultaService(ConsultaRepository repository) {
+        this.repository = repository;
+    }
 
     public Consulta cadastrarConsulta(Consulta request) {
 
@@ -22,10 +24,12 @@ public class ConsultaService {
 
     }
 
-    public List<Consulta> listarConsultas() {
-
-        return repository.findAll();
-
+    public List<Consulta> listarConsultas(String nomePaciente) {
+        if (nomePaciente == null) {
+            return repository.findAll();
+        } else {
+            return repository.findAllDietasByPacienteNome(nomePaciente);
+        }
     }
 
     public Consulta buscarPorId(Long id) {
@@ -56,5 +60,4 @@ public class ConsultaService {
         throw new ConsultaNotFoundExeception("Consulta não encontrada!");
 
     }
-
 }
