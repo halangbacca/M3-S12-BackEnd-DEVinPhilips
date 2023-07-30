@@ -137,7 +137,7 @@ public class UsuarioController {
 
     @PutMapping("/resetarsenha")
     public ResponseEntity<Object> resetarSenha (@Valid @RequestBody SenhaRequest request) {
-        if (service.resetarSenha(request.Id(), UsuarioMapper.INSTANCE.requestSenhaToUsuario(request))) {
+        if (service.resetarSenha(request.Id(), request)) {
             return ResponseEntity.status(HttpStatus.OK).body(null);
         }
         return null;

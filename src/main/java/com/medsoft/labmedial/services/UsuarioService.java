@@ -1,5 +1,6 @@
 package com.medsoft.labmedial.services;
 
+import com.medsoft.labmedial.dtos.request.SenhaRequest;
 import com.medsoft.labmedial.enums.TipoOcorrencia;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.exceptions.UsuarioExeception;
@@ -91,10 +92,10 @@ public class UsuarioService {
         return repository.findByEmail(email);
     }
 
-    public Boolean resetarSenha(Long id, Usuario request) {
+    public Boolean resetarSenha(Long id, SenhaRequest request) {
         repository.findById(id)
                 .map(usuario -> {
-                    usuario.setSenha(request.getSenha());
+                    usuario.setSenha(request.senha());
                     this.repository.save(usuario);
                     return true;
                 })
