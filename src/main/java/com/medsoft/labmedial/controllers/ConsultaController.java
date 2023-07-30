@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -44,13 +46,14 @@ public class ConsultaController {
 
     }
 
-    @GetMapping()
-    public ResponseEntity<List<ConsultaResponse>> listarConsulta() {
-
-        List<ConsultaResponse> consultaResponses = service.listarConsultas()
-                .stream()
-                .map(ConsultaMapper.INSTANCE::consultaToResponse).toList();
-
+    @GetMapping
+    public ResponseEntity<List<ConsultaResponse>> listarConsultas(@RequestParam(required = false) String nomePaciente) {
+        String decodedName = null;
+        if (nomePaciente != null) {
+            decodedName = URLDecoder.decode(nomePaciente, StandardCharsets.UTF_8);
+        }
+        List<ConsultaResponse> consultaResponses = service.listarConsultas(decodedName)
+                .stream().map(ConsultaMapper.INSTANCE::consultaToResponse).toList();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(consultaResponses);
     }
