@@ -3,10 +3,12 @@ package com.medsoft.labmedial.services;
 import com.medsoft.labmedial.dtos.request.MedicamentoRequest;
 import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
 import com.medsoft.labmedial.dtos.response.NomePaciente;
+import com.medsoft.labmedial.enums.NivelUsuario;
 import com.medsoft.labmedial.exceptions.MedicamentoNotFoundExeception;
 import com.medsoft.labmedial.mapper.MedicamentoMapper;
 import com.medsoft.labmedial.models.Medicamento;
 import com.medsoft.labmedial.models.Paciente;
+import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.MedicamentoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +40,9 @@ class MedicamentoServiceTest {
     MedicamentoMapper mapper;
 
     @Mock
+    UsuarioService usuarioService;
+
+    @Mock
     OcorrenciaService ocorrenciaService;
 
     @InjectMocks
@@ -47,6 +52,7 @@ class MedicamentoServiceTest {
     private Paciente paciente;
     private Medicamento medicamentoSalvo1;
     private Medicamento medicamentoSalvo2;
+    private Usuario usuario;
     private MedicamentoResponse medicamentoResponse;
     private Medicamento medicamentoAtualizadoMapped;
 
@@ -105,6 +111,18 @@ class MedicamentoServiceTest {
                 "Teste",
                 true
         );
+
+        usuario = new Usuario(
+                1L,
+                "Usuário",
+                "Masculino",
+                "956.484.960-87",
+                "(11)11111-1111",
+                "teste@outlook.com",
+                "senha",
+                NivelUsuario.ADMINISTRADOR,
+                true
+        );
     }
 
     @Test
@@ -120,7 +138,10 @@ class MedicamentoServiceTest {
         Mockito.when(repository.save(medicamentoAtualizadoMapped))
                 .thenReturn(medicamentoSalvo1);
 
-        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.cadastrarMedicamento(mapper.requestToMedicamento(request),"1234567890"));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.cadastrarMedicamento(mapper.requestToMedicamento(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -139,6 +160,8 @@ class MedicamentoServiceTest {
         Mockito.when(repository.existsById(1L))
                 .thenReturn(true);
 
+        Mockito.when(repository.findById(1L)).thenReturn(Optional.of(medicamentoSalvo1));
+
         Mockito.when(mapper.requestToMedicamento(request))
                 .thenReturn(medicamentoAtualizadoMapped);
 
@@ -148,7 +171,10 @@ class MedicamentoServiceTest {
         Mockito.when(repository.save(medicamentoAtualizadoMapped))
                 .thenReturn(medicamentoSalvo1);
 
-        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.atualizarMedicamento(1L, mapper.requestToMedicamento(request),"1234567890"));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        MedicamentoResponse result = mapper.medicamentoToMedicamentoResponse(service.atualizarMedicamento(1L, mapper.requestToMedicamento(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -168,7 +194,7 @@ class MedicamentoServiceTest {
     void cadastrarMedicamentoNaoLocalizado() {
 
         Exception errorMessage = assertThrows(MedicamentoNotFoundExeception.class,
-                () -> service.atualizarMedicamento(1L, mapper.requestToMedicamento(request),"1234567890"));
+                () -> service.atualizarMedicamento(1L, mapper.requestToMedicamento(request), "1234567890"));
 
         assertEquals("Medicamento não encontrado!", errorMessage.getMessage());
     }
@@ -178,10 +204,13 @@ class MedicamentoServiceTest {
     void excluirMedicamento() {
         Long id = 1L;
 
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(medicamentoSalvo1));
 
-        service.deletarPorId(id, "1234567890");
+        service.deletarPorId(id, "token");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -236,5 +265,32 @@ class MedicamentoServiceTest {
         List<MedicamentoResponse> resultadoComNomePaciente = service.listarMedicamentosPorPaciente("Paciente 1");
 
         assertEquals(resultadoComNomePaciente.size(), 2);
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro medicamento não localizada quando tentar listar medicamento não cadastrado")
+    void listarMedicamentoNaoEncontrado() {
+        Mockito.when(repository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        Exception errorMessage = assertThrows(MedicamentoNotFoundExeception.class,
+                () -> service.buscarPorId(1L));
+
+        assertEquals("Medicamento não encontrado!", errorMessage.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve retornar uma lista de exercícios ao informar o id de um paciente vinculado")
+    void listarExercicioPorIdDoPaciente() {
+        List<Optional<Medicamento>> optionalList = new ArrayList<>();
+        optionalList.add(Optional.of(medicamentoSalvo1));
+        optionalList.add(Optional.of(medicamentoSalvo2));
+
+        Mockito.when(repository.findAllMedicamentosByPacienteId(1L))
+                .thenReturn(optionalList);
+
+        List<MedicamentoResponse> resultadoComIdPaciente = service.listarMedicamentosPorPacienteId(1L);
+
+        assertEquals(resultadoComIdPaciente.size(), 2);
     }
 }

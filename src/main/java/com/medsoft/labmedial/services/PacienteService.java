@@ -27,11 +27,11 @@ public class PacienteService {
     public Paciente cadastrarPaciente(Paciente request, String token) {
 
         this.repository.findByCpf(request.getCpf()).map(paciente -> {
-            throw new PacienteConflictExeception("Cpf Ja Cadastrado");
+            throw new PacienteConflictExeception("CPF já cadastrado!");
         });
 
         this.repository.findByEmail(request.getEmail()).map(paciente -> {
-            throw new PacienteConflictExeception("E-mail Ja Cadastrado");
+            throw new PacienteConflictExeception("E-mail já cadastrado!");
         });
 
         Paciente paciente = repository.save(request);
@@ -61,7 +61,7 @@ public class PacienteService {
     public Paciente deletarPorId(Long id, String token) {
 
         return repository.findById(id)
-                .map( paciente -> {
+                .map(paciente -> {
                     repository.deleteById(id);
 
                     String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
@@ -70,13 +70,13 @@ public class PacienteService {
                             paciente.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.DELETE));
 
                     return paciente;
-                        })
+                })
                 .orElseThrow(() -> new PacienteNotFoundExeception("Paciente não encontrado!"));
     }
 
-    public Paciente atualizarPaciente(Long id, Paciente request, String token){
+    public Paciente atualizarPaciente(Long id, Paciente request, String token) {
 
-        if(this.repository.existsById(id)){
+        if (this.repository.existsById(id)) {
 
             Paciente oldPaciente = buscarPorId(id);
 

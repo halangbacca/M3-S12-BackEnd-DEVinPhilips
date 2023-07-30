@@ -3,6 +3,7 @@ package com.medsoft.labmedial.services;
 import com.medsoft.labmedial.dtos.request.PacienteRequest;
 import com.medsoft.labmedial.dtos.response.PacienteResponse;
 import com.medsoft.labmedial.enums.EstadoCivil;
+import com.medsoft.labmedial.enums.NivelUsuario;
 import com.medsoft.labmedial.exceptions.PacienteConflictExeception;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.mapper.PacienteMapper;
@@ -36,6 +37,9 @@ class PacienteServiceTest {
     @Mock
     OcorrenciaService ocorrenciaService;
 
+    @Mock
+    UsuarioService usuarioService;
+
     @InjectMocks
     private PacienteService service;
 
@@ -43,6 +47,7 @@ class PacienteServiceTest {
     private Paciente paciente;
     private Paciente pacienteSalvo1;
     private Paciente pacienteSalvo2;
+    private Usuario usuario;
     private PacienteResponse pacienteResponse;
     private Paciente pacienteAtualizadoMapped;
 
@@ -174,6 +179,18 @@ class PacienteServiceTest {
                 listaAlergias,
                 listaPrecaucoes
         );
+
+        usuario = new Usuario(
+                1L,
+                "Usuário",
+                "Masculino",
+                "956.484.960-87",
+                "(11)11111-1111",
+                "teste@outlook.com",
+                "senha",
+                NivelUsuario.ADMINISTRADOR,
+                true
+        );
     }
 
     @Test
@@ -189,7 +206,10 @@ class PacienteServiceTest {
         Mockito.when(repository.save(pacienteAtualizadoMapped))
                 .thenReturn(pacienteSalvo1);
 
-        PacienteResponse result = mapper.pacienteToResponse(service.cadastrarPaciente(mapper.requestToPaciente(request)));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        PacienteResponse result = mapper.pacienteToResponse(service.cadastrarPaciente(mapper.requestToPaciente(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -208,7 +228,7 @@ class PacienteServiceTest {
         Mockito.when(repository.findByCpf(request.cpf())).thenReturn(Optional.ofNullable(pacienteSalvo1));
 
         Exception errorMessage = assertThrows(PacienteConflictExeception.class,
-                () -> service.cadastrarPaciente(pacienteSalvo1));
+                () -> service.cadastrarPaciente(pacienteSalvo1, "token"));
 
         assertEquals("CPF já cadastrado!", errorMessage.getMessage());
     }
@@ -220,7 +240,7 @@ class PacienteServiceTest {
         Mockito.when(repository.findByEmail(request.email())).thenReturn(Optional.ofNullable(pacienteSalvo1));
 
         Exception errorMessage = assertThrows(PacienteConflictExeception.class,
-                () -> service.cadastrarPaciente(pacienteSalvo1));
+                () -> service.cadastrarPaciente(pacienteSalvo1, "token"));
 
         assertEquals("E-mail já cadastrado!", errorMessage.getMessage());
     }
@@ -231,6 +251,8 @@ class PacienteServiceTest {
         Mockito.when(repository.existsById(1L))
                 .thenReturn(true);
 
+        Mockito.when(repository.findById(1L)).thenReturn(Optional.of(pacienteSalvo1));
+
         Mockito.when(mapper.requestToPaciente(request))
                 .thenReturn(pacienteAtualizadoMapped);
 
@@ -240,7 +262,10 @@ class PacienteServiceTest {
         Mockito.when(repository.save(pacienteAtualizadoMapped))
                 .thenReturn(pacienteSalvo1);
 
-        PacienteResponse result = mapper.pacienteToResponse(service.atualizarPaciente(1L, mapper.requestToPaciente(request)));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        PacienteResponse result = mapper.pacienteToResponse(service.atualizarPaciente(1L, mapper.requestToPaciente(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -256,10 +281,10 @@ class PacienteServiceTest {
 
     @Test
     @DisplayName("Deve lançar o erro de paciente não encontrado")
-    void cadastrarPacienteNaoLocalizado() {
+    void atualizarPacienteNaoLocalizado() {
 
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.atualizarPaciente(1L, mapper.requestToPaciente(request)));
+                () -> service.atualizarPaciente(1L, mapper.requestToPaciente(request), "token"));
 
         assertEquals("Paciente não encontrado!", errorMessage.getMessage());
     }
@@ -269,10 +294,13 @@ class PacienteServiceTest {
     void excluirPaciente() {
         Long id = 1L;
 
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(pacienteSalvo1));
 
-        service.deletarPorId(id);
+        service.deletarPorId(id, "token");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -282,7 +310,7 @@ class PacienteServiceTest {
     @DisplayName("Deve lançar erro paciente não localizado quando tentar excluir paciente não cadastrado")
     void excluirPacienteNaoEncontrado() {
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.deletarPorId(1L));
+                () -> service.deletarPorId(1L, "token"));
 
         assertEquals("Paciente não encontrado!", errorMessage.getMessage());
     }
@@ -312,6 +340,15 @@ class PacienteServiceTest {
 
         assertNotNull(resultado);
         assertEquals(resultado.getId(), 1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro paciente não encontrado ao informar o id de um paciente não cadastrado")
+    void listarPacientePorIdNaoEncontrado() {
+        Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
+                () -> service.buscarPorId(1L));
+
+        assertEquals("Paciente não encontrado!", errorMessage.getMessage());
     }
 
 }

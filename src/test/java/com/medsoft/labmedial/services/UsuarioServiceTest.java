@@ -4,6 +4,7 @@ import com.medsoft.labmedial.dtos.request.UsuarioRequest;
 import com.medsoft.labmedial.dtos.response.UsuarioResponse;
 import com.medsoft.labmedial.enums.NivelUsuario;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
+import com.medsoft.labmedial.exceptions.UsuarioExeception;
 import com.medsoft.labmedial.mapper.UsuarioMapper;
 import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.UsuarioRepository;
@@ -31,13 +32,13 @@ class UsuarioServiceTest {
     private UsuarioRepository repository;
 
     @Mock
-    UsuarioMapper mapper;
+    private UsuarioMapper mapper;
 
     @Mock
     OcorrenciaService ocorrenciaService;
 
     @Mock
-    JWTUtil jwtUtil ;
+    private JWTUtil jwtUtil;
 
     @InjectMocks
     private UsuarioService service;
@@ -119,7 +120,10 @@ class UsuarioServiceTest {
         Mockito.when(repository.save(usuarioAtualizadoMapped))
                 .thenReturn(usuarioSalvo1);
 
-        UsuarioResponse result = mapper.usuarioToResponse(service.cadastrarUsuario(mapper.requestToUsuario(request),"1234567890"));
+        Mockito.when(repository.findByEmail(jwtUtil.generateToken(usuarioSalvo1)))
+                .thenReturn(Optional.ofNullable(usuarioSalvo1));
+
+        UsuarioResponse result = mapper.usuarioToResponse(service.cadastrarUsuario(mapper.requestToUsuario(request), "1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -150,7 +154,10 @@ class UsuarioServiceTest {
         Mockito.when(repository.save(usuarioAtualizadoMapped))
                 .thenReturn(usuarioSalvo1);
 
-        UsuarioResponse result = mapper.usuarioToResponse(service.atualizarUsuario(1L, mapper.requestToUsuario(request),"1234567890"));
+        Mockito.when(repository.findByEmail(jwtUtil.generateToken(usuarioSalvo1)))
+                .thenReturn(Optional.ofNullable(usuarioSalvo1));
+
+        UsuarioResponse result = mapper.usuarioToResponse(service.atualizarUsuario(1L, mapper.requestToUsuario(request), "1234567890"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -170,7 +177,7 @@ class UsuarioServiceTest {
     void cadastrarUsuarioNaoLocalizado() {
 
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.atualizarUsuario(1L, mapper.requestToUsuario(request),"1234567890"));
+                () -> service.atualizarUsuario(1L, mapper.requestToUsuario(request), "1234567890"));
 
         assertEquals("Usuário não encontrado!", errorMessage.getMessage());
     }
@@ -180,10 +187,13 @@ class UsuarioServiceTest {
     void excluirUsuario() {
         Long id = 1L;
 
+        Mockito.when(repository.findByEmail(jwtUtil.generateToken(usuarioSalvo1)))
+                .thenReturn(Optional.ofNullable(usuarioSalvo1));
+
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(usuarioSalvo1));
 
-        service.deletarPorId(id,"1234567890");
+        service.deletarPorId(id, "1234567890");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -193,7 +203,7 @@ class UsuarioServiceTest {
     @DisplayName("Deve lançar erro usuário não localizado quando tentar excluir usuário não cadastrado")
     void excluirUsuarioNaoEncontrado() {
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.deletarPorId(1L,"123456"));
+                () -> service.deletarPorId(1L, "123456"));
 
         assertEquals("Usuário não encontrado!", errorMessage.getMessage());
     }
@@ -223,5 +233,35 @@ class UsuarioServiceTest {
 
         assertNotNull(resultado);
         assertEquals(resultado.getId(), 1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar usuário não encontrado quando tentar alterar a senha de um usuário não cadastrado")
+    void alterarSenhaUsuarioNaoEncontrado() {
+        Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
+                () -> service.resetarSenha(1L, usuarioSalvo1));
+
+        assertEquals("Usuário não encontrado!", errorMessage.getMessage());
+    }
+
+    @Test
+    @DisplayName("Deve retornar o token do usuário")
+    void listarTokenUsuario() {
+        Mockito.when(repository.findByEmail(jwtUtil.generateToken(usuarioSalvo1)))
+                .thenReturn(Optional.ofNullable(usuarioSalvo1));
+
+        Usuario resultado = service.buscarUsuarioToken("1234567890");
+
+        assertNotNull(resultado);
+        assertEquals(resultado.getId(), 1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar usuário não encontrado quando tentar buscar o token de um usuário não cadastrado")
+    void buscarTokenUsuarioNaoEncontrado() {
+        Exception errorMessage = assertThrows(UsuarioExeception.class,
+                () -> service.buscarUsuarioToken("1234567890"));
+
+        assertEquals("Usuário não encontrado!", errorMessage.getMessage());
     }
 }

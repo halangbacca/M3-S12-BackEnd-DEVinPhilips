@@ -3,10 +3,12 @@ package com.medsoft.labmedial.services;
 import com.medsoft.labmedial.dtos.request.ConsultaRequest;
 import com.medsoft.labmedial.dtos.response.ConsultaResponse;
 import com.medsoft.labmedial.dtos.response.NomePaciente;
+import com.medsoft.labmedial.enums.NivelUsuario;
 import com.medsoft.labmedial.exceptions.ConsultaNotFoundExeception;
 import com.medsoft.labmedial.mapper.ConsultaMapper;
 import com.medsoft.labmedial.models.Consulta;
 import com.medsoft.labmedial.models.Paciente;
+import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.ConsultaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +39,9 @@ class ConsultaServiceTest {
     ConsultaMapper mapper;
 
     @Mock
+    UsuarioService usuarioService;
+
+    @Mock
     OcorrenciaService ocorrenciaService;
 
     @InjectMocks
@@ -46,6 +51,7 @@ class ConsultaServiceTest {
     private Paciente paciente;
     private Consulta consultaSalva1;
     private Consulta consultaSalva2;
+    private Usuario usuario;
     private ConsultaResponse consultaResponse;
     private Consulta consultaAtualizadaMapped;
 
@@ -100,6 +106,17 @@ class ConsultaServiceTest {
                 "Precaução",
                 true
         );
+
+        usuario = new Usuario(
+                1L,
+                "Usuário",
+                "Masculino",
+                "956.484.960-87",
+                "(11)11111-1111",
+                "teste@outlook.com",
+                "senha",
+                NivelUsuario.ADMINISTRADOR,
+                true);
     }
 
     @Test
@@ -115,7 +132,10 @@ class ConsultaServiceTest {
         Mockito.when(repository.save(consultaAtualizadaMapped))
                 .thenReturn(consultaSalva1);
 
-        ConsultaResponse result = mapper.consultaToResponse(service.cadastrarConsulta(mapper.requestToConsulta(request),"123456789"));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        ConsultaResponse result = mapper.consultaToResponse(service.cadastrarConsulta(mapper.requestToConsulta(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -134,6 +154,8 @@ class ConsultaServiceTest {
         Mockito.when(repository.existsById(1L))
                 .thenReturn(true);
 
+        Mockito.when(repository.findById(1L)).thenReturn(Optional.of(consultaSalva1));
+
         Mockito.when(mapper.requestToConsulta(request))
                 .thenReturn(consultaAtualizadaMapped);
 
@@ -143,7 +165,10 @@ class ConsultaServiceTest {
         Mockito.when(repository.save(consultaAtualizadaMapped))
                 .thenReturn(consultaSalva1);
 
-        ConsultaResponse result = mapper.consultaToResponse(service.atualizarConsulta(1L, mapper.requestToConsulta(request),"123456789"));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        ConsultaResponse result = mapper.consultaToResponse(service.atualizarConsulta(1L, mapper.requestToConsulta(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -163,7 +188,7 @@ class ConsultaServiceTest {
     void cadastrarConsultaNaoLocalizada() {
 
         Exception errorMessage = assertThrows(ConsultaNotFoundExeception.class,
-                () -> service.atualizarConsulta(1L, mapper.requestToConsulta(request),"123456789"));
+                () -> service.atualizarConsulta(1L, mapper.requestToConsulta(request), "123456789"));
 
         assertEquals("Consulta não encontrada!", errorMessage.getMessage());
     }
@@ -176,7 +201,10 @@ class ConsultaServiceTest {
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(consultaSalva1));
 
-        service.deletarPorId(id,"123456789");
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        service.deletarPorId(id, "token");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -186,7 +214,7 @@ class ConsultaServiceTest {
     @DisplayName("Deve lançar erro consulta não localizada quando tentar excluir consulta não cadastrada")
     void excluirConsultaNaoEncontrada() {
         Exception errorMessage = assertThrows(ConsultaNotFoundExeception.class,
-                () -> service.deletarPorId(1L,"123456789"));
+                () -> service.deletarPorId(1L, "123456789"));
 
         assertEquals("Consulta não encontrada!", errorMessage.getMessage());
     }

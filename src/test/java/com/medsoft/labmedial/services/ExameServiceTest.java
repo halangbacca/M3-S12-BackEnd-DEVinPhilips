@@ -2,10 +2,12 @@ package com.medsoft.labmedial.services;
 
 import com.medsoft.labmedial.dtos.request.ExameRequest;
 import com.medsoft.labmedial.dtos.response.ExameResponse;
+import com.medsoft.labmedial.enums.NivelUsuario;
 import com.medsoft.labmedial.exceptions.ExameNotFoundException;
 import com.medsoft.labmedial.mapper.ExameMapper;
 import com.medsoft.labmedial.models.Exame;
 import com.medsoft.labmedial.models.Paciente;
+import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.ExameRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +38,9 @@ class ExameServiceTest {
     ExameMapper mapper;
 
     @Mock
+    UsuarioService usuarioService;
+
+    @Mock
     OcorrenciaService ocorrenciaService;
 
     @InjectMocks
@@ -45,6 +50,7 @@ class ExameServiceTest {
     private Paciente paciente;
     private Exame exameSalvo1;
     private Exame exameSalvo2;
+    private Usuario usuario;
     private ExameResponse exameResponse;
     private Exame exameAtualizadoMapped;
 
@@ -99,6 +105,18 @@ class ExameServiceTest {
                 paciente,
                 true
         );
+
+        usuario = new Usuario(
+                1L,
+                "Usuário",
+                "Masculino",
+                "956.484.960-87",
+                "(11)11111-1111",
+                "teste@outlook.com",
+                "senha",
+                NivelUsuario.ADMINISTRADOR,
+                true
+        );
     }
 
     @Test
@@ -114,7 +132,10 @@ class ExameServiceTest {
         Mockito.when(repository.save(exameAtualizadoMapped))
                 .thenReturn(exameSalvo1);
 
-        ExameResponse result = mapper.exameToResponse(service.cadastrarExame(mapper.requestToExame(request),"1234567890"));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        ExameResponse result = mapper.exameToResponse(service.cadastrarExame(mapper.requestToExame(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -132,6 +153,8 @@ class ExameServiceTest {
         Mockito.when(repository.existsById(1L))
                 .thenReturn(true);
 
+        Mockito.when(repository.findById(1L)).thenReturn(Optional.of(exameSalvo1));
+
         Mockito.when(mapper.requestToExame(request))
                 .thenReturn(exameAtualizadoMapped);
 
@@ -141,7 +164,10 @@ class ExameServiceTest {
         Mockito.when(repository.save(exameAtualizadoMapped))
                 .thenReturn(exameSalvo1);
 
-        ExameResponse result = mapper.exameToResponse(service.atualizarExame(1L, mapper.requestToExame(request),"1234567890"));
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        ExameResponse result = mapper.exameToResponse(service.atualizarExame(1L, mapper.requestToExame(request), "token"));
 
         assertAll(
                 () -> assertNotNull(result),
@@ -160,7 +186,7 @@ class ExameServiceTest {
     void cadastrarExameNaoLocalizado() {
 
         Exception errorMessage = assertThrows(ExameNotFoundException.class,
-                () -> service.atualizarExame(1L, mapper.requestToExame(request),"1234567890"));
+                () -> service.atualizarExame(1L, mapper.requestToExame(request), "1234567890"));
 
         assertEquals("Exame não encontrado!", errorMessage.getMessage());
     }
@@ -173,7 +199,10 @@ class ExameServiceTest {
         Mockito.when(repository.findById(id))
                 .thenReturn(Optional.of(exameSalvo1));
 
-        service.deletarPorId(id,"1234567890");
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        service.deletarPorId(id, "token");
 
         Mockito.verify(repository).findById(id);
         Mockito.verify(repository).deleteById(id);
@@ -183,7 +212,7 @@ class ExameServiceTest {
     @DisplayName("Deve lançar erro exame não localizado quando tentar excluir exame não cadastrado")
     void excluirExameNaoEncontrado() {
         Exception errorMessage = assertThrows(ExameNotFoundException.class,
-                () -> service.deletarPorId(1L,"1234567890"));
+                () -> service.deletarPorId(1L, "1234567890"));
 
         assertEquals("Exame não encontrado!", errorMessage.getMessage());
     }

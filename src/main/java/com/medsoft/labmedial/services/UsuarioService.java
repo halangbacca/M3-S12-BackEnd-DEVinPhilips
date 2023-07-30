@@ -29,7 +29,7 @@ public class UsuarioService {
 
         Usuario usuario = repository.save(request);
 
-        if(token!=null){
+        if (token != null) {
             String nomeUsuario = buscarUsuarioToken(token).getNome();
 
             ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "USUARIO", usuario.getId(),
@@ -40,16 +40,13 @@ public class UsuarioService {
     }
 
     public List<Usuario> listarUsuarios() {
-
         return repository.findAll();
-
     }
 
     public Usuario buscarPorId(Long id) {
 
         return repository.findById(id)
                 .orElseThrow(() -> new PacienteNotFoundExeception("Usuário não encontrado!"));
-
     }
 
     public Boolean deletarPorId(Long id, String token) {
@@ -90,13 +87,13 @@ public class UsuarioService {
     }
 
 
-    public Optional<Usuario> buscarEmail(String email){
+    public Optional<Usuario> buscarEmail(String email) {
         return repository.findByEmail(email);
     }
 
     public Boolean resetarSenha(Long id, Usuario request) {
         repository.findById(id)
-                .map( usuario -> {
+                .map(usuario -> {
                     repository.findById(id);
                     usuario.setSenha(request.getSenha());
                     this.repository.save(usuario);
@@ -104,21 +101,19 @@ public class UsuarioService {
                 })
                 .orElseThrow(() -> new PacienteNotFoundExeception("Usuário não encontrado!"));
         return null;
-
     }
 
-    public Usuario buscarUsuarioToken(String autorization){
+    public Usuario buscarUsuarioToken(String autorization) {
         String token = autorization.substring(7);
         String email = jwtUtil.validateTokenAndRetrieveSubject(token);
 
         Optional<Usuario> usuario = buscarEmail(email);
 
-        if(usuario.isEmpty()){
-            throw  new UsuarioExeception("Usuário não encontrado");
+        if (usuario.isEmpty()) {
+            throw new UsuarioExeception("Usuário não encontrado!");
         }
 
         return usuario.get();
     }
-
 
 }

@@ -23,8 +23,8 @@ public class ExercicioService {
     private final ExercicioRepository repository;
     private final PacienteService service;
     private final ExercicioMapper mapper;
-  private final OcorrenciaService ocorrenciaService;
-  private final UsuarioService usuarioService;
+    private final OcorrenciaService ocorrenciaService;
+    private final UsuarioService usuarioService;
 
     @Autowired
     public ExercicioService(ExercicioRepository repository,
@@ -32,9 +32,9 @@ public class ExercicioService {
         this.repository = repository;
         this.service = service;
         this.mapper = mapper;
-    this.ocorrenciaService = ocorrenciaService;
-    this.usuarioService = usuarioService;
-  }
+        this.ocorrenciaService = ocorrenciaService;
+        this.usuarioService = usuarioService;
+    }
 
     public ExercicioResponse cadastrarExercicio(ExercicioRequest request, String token) {
         Paciente paciente = service.buscarPorId(request.idPaciente());
@@ -45,14 +45,14 @@ public class ExercicioService {
             exercicio.setSituacao(true);
             Exercicio novoExercicio = repository.save(exercicio);
 
-      String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
+            String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
 
-      ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXERCICIO", novoExercicio.getId(),
-              novoExercicio.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.INSERT));
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXERCICIO", novoExercicio.getId(),
+                    novoExercicio.toString(), null, new Date(), nomeUsuario, TipoOcorrencia.INSERT));
 
-      return mapper.exercicioToExercicioResponse(novoExercicio);
+            return mapper.exercicioToExercicioResponse(novoExercicio);
         } else {
-            throw new PacienteNotFoundExeception("Paciente não encontrado.");
+            throw new PacienteNotFoundExeception("Paciente não encontrado!");
         }
     }
 
@@ -64,14 +64,14 @@ public class ExercicioService {
             exercicio.setSituacao(optionalExercicio.get().getSituacao());
             Exercicio novoExercicio = repository.save(exercicio);
 
-      String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
+            String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
 
-      ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXERCICIO", id,
-              novoExercicio.toString(), optionalExercicio.get().toString(), new Date(), nomeUsuario, TipoOcorrencia.UPDATE));
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXERCICIO", id,
+                    novoExercicio.toString(), optionalExercicio.get().toString(), new Date(), nomeUsuario, TipoOcorrencia.UPDATE));
 
-      return mapper.exercicioToExercicioResponse(novoExercicio);
+            return mapper.exercicioToExercicioResponse(novoExercicio);
         } else {
-            throw new ExercicioNotFoundException("Exercício não encontrado.");
+            throw new ExercicioNotFoundException("Exercício não encontrado!");
         }
 
     }
@@ -79,14 +79,14 @@ public class ExercicioService {
     public void excluirExercicio(Long id, String token) {
         if (repository.existsById(id)) {
 
-      String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
+            String nomeUsuario = usuarioService.buscarUsuarioToken(token).getNome();
 
-      ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXERCICIO", id,
-              repository.findById(id).toString(), null, new Date(), nomeUsuario, TipoOcorrencia.DELETE));
+            ocorrenciaService.cadastrarOcorrencia(new Ocorrencia(null, "EXERCICIO", id,
+                    repository.findById(id).toString(), null, new Date(), nomeUsuario, TipoOcorrencia.DELETE));
 
             repository.deleteById(id);
         } else {
-            throw new ExercicioNotFoundException("Exercício não encontrado.");
+            throw new ExercicioNotFoundException("Exercício não encontrado!");
         }
     }
 

@@ -3,12 +3,14 @@ package com.medsoft.labmedial.services;
 import com.medsoft.labmedial.dtos.request.DietaRequest;
 import com.medsoft.labmedial.dtos.response.DietaResponse;
 import com.medsoft.labmedial.dtos.response.NomePaciente;
+import com.medsoft.labmedial.enums.NivelUsuario;
 import com.medsoft.labmedial.enums.TipoDieta;
 import com.medsoft.labmedial.exceptions.DietaNotFoundException;
 import com.medsoft.labmedial.exceptions.PacienteNotFoundExeception;
 import com.medsoft.labmedial.mapper.DietaMapper;
 import com.medsoft.labmedial.models.Dieta;
 import com.medsoft.labmedial.models.Paciente;
+import com.medsoft.labmedial.models.Usuario;
 import com.medsoft.labmedial.repositories.DietaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,6 +45,9 @@ class DietaServiceTest {
     DietaMapper mapper;
 
     @Mock
+    UsuarioService usuarioService;
+
+    @Mock
     OcorrenciaService ocorrenciaService;
 
     @InjectMocks
@@ -52,6 +57,7 @@ class DietaServiceTest {
     private Paciente paciente;
     private Dieta dietaSalva1;
     private Dieta dietaSalva2;
+    private Usuario usuario;
     private Dieta dietaMapped;
     private DietaResponse dietaResponse;
     private Dieta dietaAtualizadaMapped;
@@ -124,6 +130,18 @@ class DietaServiceTest {
                 new NomePaciente(1L, "Paciente 1"),
                 true
         );
+
+        usuario = new Usuario(
+                1L,
+                "Usuário",
+                "Masculino",
+                "956.484.960-87",
+                "(11)11111-1111",
+                "teste@outlook.com",
+                "senha",
+                NivelUsuario.ADMINISTRADOR,
+                true
+        );
     }
 
     @Test
@@ -141,7 +159,10 @@ class DietaServiceTest {
         Mockito.when(mapper.dietaToDietaResponse(dietaSalva1))
                 .thenReturn(dietaResponse);
 
-        DietaResponse result = service.cadastrarDieta(request,"1234567890");
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        DietaResponse result = service.cadastrarDieta(request, "token");
 
         assertAll(
                 () -> assertNotNull(result),
@@ -164,7 +185,7 @@ class DietaServiceTest {
 
 
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,
-                () -> service.cadastrarDieta(request,"1234567890"));
+                () -> service.cadastrarDieta(request, "1234567890"));
 
         assertEquals("Paciente não encontrado.", errorMessage.getMessage());
     }
@@ -184,7 +205,10 @@ class DietaServiceTest {
         Mockito.when(repository.save(dietaAtualizadaMapped))
                 .thenReturn(dietaSalva1);
 
-        DietaResponse result = service.atualizarDieta(request, 1L,"1234567890");
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        DietaResponse result = service.atualizarDieta(request, 1L, "token");
 
         assertAll(
                 () -> assertNotNull(result),
@@ -206,7 +230,7 @@ class DietaServiceTest {
                 .thenReturn(Optional.empty());
 
         Exception errorMessage = assertThrows(DietaNotFoundException.class,
-                () -> service.atualizarDieta(request, 1L,"1234567890"));
+                () -> service.atualizarDieta(request, 1L, "1234567890"));
 
         assertEquals("Dieta não encontrada.", errorMessage.getMessage());
     }
@@ -219,7 +243,10 @@ class DietaServiceTest {
         Mockito.when(repository.existsById(id))
                 .thenReturn(true);
 
-        service.excluirDieta(id,"1234567890");
+        Mockito.when(usuarioService.buscarUsuarioToken("token"))
+                .thenReturn(usuario);
+
+        service.excluirDieta(id, "token");
 
         Mockito.verify(repository).existsById(id);
         Mockito.verify(repository).deleteById(id);
@@ -269,5 +296,48 @@ class DietaServiceTest {
         List<DietaResponse> resultadoComNomePaciente = service.listarDietasPorPaciente("Paciente 1");
 
         assertEquals(resultadoComNomePaciente.size(), 2);
+    }
+
+    @Test
+    @DisplayName("Deve retornar uma lista de dietas ao informar o id de um paciente vinculado")
+    void listarDietaPorIdDoPaciente() {
+        List<Optional<Dieta>> optionalList = new ArrayList<>();
+        optionalList.add(Optional.of(dietaSalva1));
+        optionalList.add(Optional.of(dietaSalva2));
+
+        Mockito.when(repository.findAllDietasByPacienteId(1L))
+                .thenReturn(optionalList);
+
+        List<DietaResponse> resultadoComIdPaciente = service.listarDietasPorPacienteId(1L);
+
+        assertEquals(resultadoComIdPaciente.size(), 2);
+    }
+
+    @Test
+    @DisplayName("Deve exibir a dieta ao informar um id válido")
+    void listarDietaPeloId() {
+        Mockito.when(repository.findById(1L))
+                .thenReturn(Optional.of(dietaSalva1));
+
+        Dieta result = service.listarDietaPorId(1L);
+
+        assertAll(
+                () -> assertNotNull(result),
+                () -> assertEquals(result.getId(), 1L)
+        );
+
+        Mockito.verify(repository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Deve lançar erro dieta não encontrada quando informar id de uma dieta não cadastrada")
+    void listarDietaNaoEncontrada() {
+        Mockito.when(repository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        Exception errorMessage = assertThrows(DietaNotFoundException.class,
+                () -> service.listarDietaPorId(1L));
+
+        assertEquals("Dieta não encontrada.", errorMessage.getMessage());
     }
 }
