@@ -9,21 +9,27 @@ import com.medsoft.labmedial.models.Paciente;
 import com.medsoft.labmedial.services.ExameService;
 import com.medsoft.labmedial.services.PacienteService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/exames")
 public class ExameController {
 
-    @Autowired
-    private ExameService service;
-    @Autowired
-    private PacienteService servicePaciente;
+
+    private final ExameService service;
+
+    private final PacienteService servicePaciente;
+
+    public ExameController(ExameService service, PacienteService servicePaciente) {
+        this.service = service;
+        this.servicePaciente = servicePaciente;
+    }
 
     @PostMapping()
     public ResponseEntity<ExameResponse> cadastrarExame(@Valid @RequestBody ExameRequest request) {
@@ -44,14 +50,15 @@ public class ExameController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ExameResponse>> listarExames() {
-
-        List<ExameResponse> exameResponses = service.listarExames()
-                .stream()
-                .map(ExameMapper.INSTANCE::exameToResponse).toList();
-
+    public ResponseEntity<List<ExameResponse>> listarExames(@RequestParam(required = false) String nomePaciente) {
+        String decodedName = null;
+        if (nomePaciente != null) {
+            decodedName = URLDecoder.decode(nomePaciente, StandardCharsets.UTF_8);
+        }
+        List<ExameResponse> consultaResponses = service.listarExames(decodedName)
+                .stream().map(ExameMapper.INSTANCE::exameToResponse).toList();
         return ResponseEntity.status(HttpStatus.OK)
-                .body(exameResponses);
+                .body(consultaResponses);
     }
 
     @GetMapping("/{id}")

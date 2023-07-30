@@ -20,8 +20,12 @@ public class ExameService {
 
     }
 
-    public List<Exame> listarExames() {
-        return repository.findAll();
+    public List<Exame> listarExames(String nomePaciente) {
+        if (nomePaciente == null) {
+            return repository.findAll();
+        } else {
+            return repository.findAllDietasByPacienteNome(nomePaciente);
+        }
     }
 
     public Exame buscarPorId(Long id) {
