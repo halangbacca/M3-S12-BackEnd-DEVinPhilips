@@ -7,5 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DietaRepository extends JpaRepository<Dieta, Long> {
-  List<Optional<Dieta>> findAllDietasByPacienteNome(String nomePaciente);
+    List<Optional<Dieta>> findAllDietasByPacienteNome(String nomePaciente);
+
+    List<Optional<Dieta>> findAllDietasByPacienteId(Long id);
 }

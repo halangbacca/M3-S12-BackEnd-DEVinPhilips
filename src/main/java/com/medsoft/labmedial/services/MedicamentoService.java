@@ -1,11 +1,8 @@
 package com.medsoft.labmedial.services;
 
-import com.medsoft.labmedial.dtos.response.DietaResponse;
 import com.medsoft.labmedial.dtos.response.MedicamentoResponse;
 import com.medsoft.labmedial.exceptions.MedicamentoNotFoundExeception;
-import com.medsoft.labmedial.mapper.DietaMapper;
 import com.medsoft.labmedial.mapper.MedicamentoMapper;
-import com.medsoft.labmedial.models.Dieta;
 import com.medsoft.labmedial.models.Medicamento;
 import com.medsoft.labmedial.repositories.MedicamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +40,14 @@ public class MedicamentoService {
                 .orElseThrow(() -> new MedicamentoNotFoundExeception("Medicamento não encontrado!"));
 
         return false;
+    }
+
+    public List<MedicamentoResponse> listarMedicamentosPorPacienteId(Long id) {
+        List<Optional<Medicamento>> medicamentos = repository.findAllMedicamentosByPacienteId(id);
+        return medicamentos.stream()
+                .map(MedicamentoMapper.INSTANCE::optionalMedicamentoToMedicamento)
+                .map(MedicamentoMapper.INSTANCE::medicamentoToMedicamentoResponse)
+                .collect(Collectors.toList());
     }
 
     public Medicamento atualizarMedicamento(Long id, Medicamento request) {

@@ -61,6 +61,13 @@ public class MedicamentoController {
                 .body(MedicamentoMapper.INSTANCE.medicamentoToMedicamentoResponse(service.buscarPorId(id)));
     }
 
+    @GetMapping("/paciente/{id}")
+    public ResponseEntity<List<MedicamentoResponse>> buscarPorPacienteId(@PathVariable Long id) {
+        List<MedicamentoResponse> medicamentoResponse = service.listarMedicamentosPorPacienteId(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(medicamentoResponse);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
 

@@ -18,66 +18,79 @@ import java.util.stream.Collectors;
 @Service
 public class DietaService {
 
-  private final PacienteService service;
+    private final PacienteService service;
 
-  private final DietaRepository repository;
-  private final DietaMapper mapper;
+    private final DietaRepository repository;
+    private final DietaMapper mapper;
 
-  @Autowired
-  public DietaService(DietaRepository repository,
-                      PacienteService service,
-                      DietaMapper mapper) {
-    this.service = service;
-    this.repository = repository;
-    this.mapper = mapper;
-  }
-
-  public DietaResponse cadastrarDieta(DietaRequest request) {
-    Paciente paciente = this.service.buscarPorId(request.idPaciente());
-
-    if (paciente != null) {
-      Dieta dieta = mapper.dietaRequestToDieta(request);
-      dieta.setPaciente(paciente);
-      dieta.setSituacao(true);
-      return mapper.dietaToDietaResponse(repository.save(dieta));
-    } else {
-      throw new PacienteNotFoundExeception("Paciente não encontrado.");
+    @Autowired
+    public DietaService(DietaRepository repository,
+                        PacienteService service,
+                        DietaMapper mapper) {
+        this.service = service;
+        this.repository = repository;
+        this.mapper = mapper;
     }
-  }
 
-  public DietaResponse atualizarDieta(DietaRequest request, Long id) {
-    Optional<Dieta> optionalDieta = repository.findById(id);
+    public DietaResponse cadastrarDieta(DietaRequest request) {
+        Paciente paciente = this.service.buscarPorId(request.idPaciente());
 
-    if (optionalDieta.isPresent()) {
-      Dieta dieta = mapper.dietaRequestToDieta(request);
-      dieta.setId(id);
-      dieta.setSituacao(optionalDieta.get().getSituacao());
-      return mapper.dietaToDietaResponse(repository.save(dieta));
-    } else {
-      throw new DietaNotFoundException("Dieta não encontrada.");
+        if (paciente != null) {
+            Dieta dieta = mapper.dietaRequestToDieta(request);
+            dieta.setPaciente(paciente);
+            dieta.setSituacao(true);
+            return mapper.dietaToDietaResponse(repository.save(dieta));
+        } else {
+            throw new PacienteNotFoundExeception("Paciente não encontrado.");
+        }
     }
-  }
 
-  public void excluirDieta(Long id) {
-    if (repository.existsById(id)) {
-      repository.deleteById(id);
-    } else {
-      throw new DietaNotFoundException("Dieta não encontrada.");
-    }
-  }
+    public DietaResponse atualizarDieta(DietaRequest request, Long id) {
+        Optional<Dieta> optionalDieta = repository.findById(id);
 
-  public List<DietaResponse> listarDietasPorPaciente(String nomePaciente) {
-    if (nomePaciente == null) {
-      return repository.findAll()
-              .stream()
-              .map(DietaMapper.INSTANCE::dietaToDietaResponse)
-              .collect(Collectors.toList());
-    } else {
-      List<Optional<Dieta>> dietas = repository.findAllDietasByPacienteNome(nomePaciente);
-      return dietas.stream()
-              .map(DietaMapper.INSTANCE::optionalDietaToDieta)
-              .map(DietaMapper.INSTANCE::dietaToDietaResponse)
-              .collect(Collectors.toList());
+        if (optionalDieta.isPresent()) {
+            Dieta dieta = mapper.dietaRequestToDieta(request);
+            dieta.setId(id);
+            dieta.setSituacao(optionalDieta.get().getSituacao());
+            return mapper.dietaToDietaResponse(repository.save(dieta));
+        } else {
+            throw new DietaNotFoundException("Dieta não encontrada.");
+        }
     }
-  }
+
+    public void excluirDieta(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new DietaNotFoundException("Dieta não encontrada.");
+        }
+    }
+
+    public Dieta listarDietaPorId(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new DietaNotFoundException("Dieta não encontrada."));
+    }
+
+    public List<DietaResponse> listarDietasPorPacienteId(Long id) {
+        List<Optional<Dieta>> dietas = repository.findAllDietasByPacienteId(id);
+        return dietas.stream()
+                .map(DietaMapper.INSTANCE::optionalDietaToDieta)
+                .map(DietaMapper.INSTANCE::dietaToDietaResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<DietaResponse> listarDietasPorPaciente(String nomePaciente) {
+        if (nomePaciente == null) {
+            return repository.findAll()
+                    .stream()
+                    .map(DietaMapper.INSTANCE::dietaToDietaResponse)
+                    .collect(Collectors.toList());
+        } else {
+            List<Optional<Dieta>> dietas = repository.findAllDietasByPacienteNome(nomePaciente);
+            return dietas.stream()
+                    .map(DietaMapper.INSTANCE::optionalDietaToDieta)
+                    .map(DietaMapper.INSTANCE::dietaToDietaResponse)
+                    .collect(Collectors.toList());
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.medsoft.labmedial.controllers;
 
 import com.medsoft.labmedial.dtos.request.ExercicioRequest;
 import com.medsoft.labmedial.dtos.response.ExercicioResponse;
+import com.medsoft.labmedial.mapper.ExercicioMapper;
 import com.medsoft.labmedial.services.ExercicioService;
 import jakarta.validation.Valid;
 import org.hibernate.mapping.Any;
@@ -44,6 +45,19 @@ public class ExercicioController {
         List<ExercicioResponse> exercicioResponseList = service.listarExerciciosPorPaciente(nomePaciente);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(exercicioResponseList);
+    }
+
+    @GetMapping("/listar/{id}")
+    public ResponseEntity<ExercicioResponse> listarExercicioPorId(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ExercicioMapper.INSTANCE.exercicioToExercicioResponse((service.listarExercicioPorId(id))));
+    }
+
+    @GetMapping("/paciente/{id}")
+    public ResponseEntity<List<ExercicioResponse>> buscarPorPacienteId(@PathVariable Long id) {
+        List<ExercicioResponse> exercicioResponse = service.listarExerciciosPorPacienteId(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(exercicioResponse);
     }
 
     @DeleteMapping("/{id}")
