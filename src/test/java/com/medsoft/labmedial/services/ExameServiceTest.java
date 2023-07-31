@@ -64,7 +64,8 @@ class ExameServiceTest {
                 "Cápsula",
                 "mg",
                 "precaucao",
-                1L
+                1L,
+                "laboratorio"
         );
 
         paciente = Mockito.mock(Paciente.class);
@@ -81,7 +82,8 @@ class ExameServiceTest {
                 "Documento",
                 "Resultado",
                 paciente,
-                true
+                true,
+                "laboratorio"
         );
 
         exameSalvo2 = new Exame(
@@ -92,7 +94,8 @@ class ExameServiceTest {
                 "Documento",
                 "Resultado",
                 paciente,
-                true
+                true,
+                "laboratorio"
         );
 
         exameResponse = new ExameResponse(
@@ -103,6 +106,7 @@ class ExameServiceTest {
                 "documento",
                 "resultado",
                 paciente,
+                "laboratorio",
                 true
         );
 
