@@ -21,10 +21,6 @@ public class ConsultaService {
     @Autowired
     private ConsultaRepository repository;
 
-    public ConsultaService(ConsultaRepository repository) {
-        this.repository = repository;
-    }
-
     @Autowired
     private OcorrenciaService ocorrenciaService;
 

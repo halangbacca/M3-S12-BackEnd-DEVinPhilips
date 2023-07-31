@@ -244,4 +244,34 @@ class ExameServiceTest {
         assertEquals(resultado.getId(), 1L);
     }
 
+    @Test
+    @DisplayName("Deve retornar uma lista de exames quando for informado o id do paciente")
+    void listarExamePorPacienteId() {
+        List<Optional<Exame>> optionalList = new ArrayList<>();
+        optionalList.add(Optional.of(exameSalvo1));
+        optionalList.add(Optional.of(exameSalvo2));
+
+        Mockito.when(repository.findAllExamesByPacienteId(1L))
+                .thenReturn(optionalList);
+
+        List<ExameResponse> resultadoComIdPaciente = service.listarExamesPorPacienteId(1L);
+
+        assertEquals(resultadoComIdPaciente.size(), 2);
+    }
+
+    @Test
+    @DisplayName("Deve retornar uma lista de exames quando for informado o nome do paciente")
+    void listarExamePorNomePaciente() {
+        List<Exame> optionalList = new ArrayList<>();
+        optionalList.add(exameSalvo1);
+        optionalList.add(exameSalvo2);
+
+        Mockito.when(repository.findAllExamesByPacienteNome("Halan"))
+                .thenReturn(optionalList);
+
+        List<Exame> resultadoComIdPaciente = service.listarExames("Halan");
+
+        assertEquals(resultadoComIdPaciente.size(), 2);
+    }
+
 }
