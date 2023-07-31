@@ -245,6 +245,21 @@ class UsuarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve retornar true ao atualizar a senha do usuário")
+    void resetarSenha() {
+        Mockito.when(repository.findById(1L))
+                .thenReturn(Optional.ofNullable(usuarioSalvo1));
+
+        Mockito.when(repository.save(usuarioSalvo1))
+                .thenReturn(usuarioSalvo1);
+
+        Boolean resultado = service.resetarSenha(1L, senhaRequest);
+
+        assertNotNull(resultado);
+        assertTrue(resultado);
+    }
+
+    @Test
     @DisplayName("Deve lançar usuário não encontrado quando tentar alterar a senha de um usuário não cadastrado")
     void alterarSenhaUsuarioNaoEncontrado() {
         Exception errorMessage = assertThrows(PacienteNotFoundExeception.class,

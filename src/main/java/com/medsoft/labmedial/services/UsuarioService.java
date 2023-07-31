@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
     @Autowired
-    private UsuarioRepository repository;
+    private UsuarioRepository repository; //ta injetando certinho o mock pelo visto tbm issu
 
     @Autowired
     private OcorrenciaService ocorrenciaService;
@@ -87,20 +87,19 @@ public class UsuarioService {
 
     }
 
-
     public Optional<Usuario> buscarEmail(String email) {
         return repository.findByEmail(email);
     }
 
     public Boolean resetarSenha(Long id, SenhaRequest request) {
-        repository.findById(id)
-                .map(usuario -> {
-                    usuario.setSenha(request.senha());
-                    this.repository.save(usuario);
-                    return true;
-                })
-                .orElseThrow(() -> new PacienteNotFoundExeception("Usuário não encontrado!"));
-        return false;
+        var user = repository.findById(id);
+        if (user.isPresent()) {
+            var foundUser = user.get();
+            foundUser.setSenha(request.senha());
+            repository.save(foundUser);
+            return true;
+        }
+        throw new PacienteNotFoundExeception("Usuário não encontrado!");
     }
 
     public Usuario buscarUsuarioToken(String autorization) {

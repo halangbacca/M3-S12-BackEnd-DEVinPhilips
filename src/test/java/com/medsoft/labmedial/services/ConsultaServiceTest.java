@@ -246,4 +246,34 @@ class ConsultaServiceTest {
         assertEquals(resultado.getId(), 1L);
     }
 
+    @Test
+    @DisplayName("Deve retornar uma lista de consultas quando for informado o id do paciente")
+    void listarConsultaPorPacienteId() {
+        List<Optional<Consulta>> optionalList = new ArrayList<>();
+        optionalList.add(Optional.of(consultaSalva1));
+        optionalList.add(Optional.of(consultaSalva2));
+
+        Mockito.when(repository.findAllConsultasByPacienteId(1L))
+                .thenReturn(optionalList);
+
+        List<ConsultaResponse> resultadoComIdPaciente = service.listarConsultasPorPacienteId(1L);
+
+        assertEquals(resultadoComIdPaciente.size(), 2);
+    }
+
+    @Test
+    @DisplayName("Deve retornar uma lista de consultas quando for informado o nome do paciente")
+    void listarConsultaPorNomePaciente() {
+        List<Consulta> optionalList = new ArrayList<>();
+        optionalList.add(consultaSalva1);
+        optionalList.add(consultaSalva2);
+
+        Mockito.when(repository.findAllConsultasByPacienteNome("Halan"))
+                .thenReturn(optionalList);
+
+        List<Consulta> resultadoComIdPaciente = service.listarConsultas("Halan");
+
+        assertEquals(resultadoComIdPaciente.size(), 2);
+    }
+
 }
