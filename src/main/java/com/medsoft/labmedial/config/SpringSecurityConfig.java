@@ -4,7 +4,6 @@ import com.medsoft.labmedial.security.JWTFilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -39,6 +38,8 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(aut-> aut
                         .requestMatchers(HttpMethod.POST,"/api/usuarios").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/usuarios/login").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/usuarios/obter_id/*").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/api/usuarios/resetarsenha").permitAll()
                         .requestMatchers("/**").authenticated()
                 )
                 .cors(cors-> new CorsConfiguration())

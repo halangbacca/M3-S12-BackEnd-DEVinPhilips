@@ -148,7 +148,7 @@ public class UsuarioController {
         Optional<Usuario> usuario = this.service.buscarEmail(email);
         if (usuario.isPresent()) {
             IdUsuarioResponse id = new IdUsuarioResponse(usuario.get().getId());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(id);
+            return ResponseEntity.status(HttpStatus.OK).body(id);
         } else {
             throw new UsuarioExeception("Usuário não encontrado");
         }

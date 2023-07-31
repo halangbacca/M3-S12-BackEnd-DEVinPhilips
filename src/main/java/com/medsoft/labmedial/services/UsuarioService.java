@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
     @Autowired
-    private UsuarioRepository repository; //ta injetando certinho o mock pelo visto tbm issu
+    private UsuarioRepository repository;
 
     @Autowired
     private OcorrenciaService ocorrenciaService;
