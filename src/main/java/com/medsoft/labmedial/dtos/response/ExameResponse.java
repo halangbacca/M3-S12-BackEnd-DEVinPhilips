@@ -19,6 +19,8 @@ public record ExameResponse(
         String resultado,
 
         Paciente paciente,
+
+        String laboratorio,
         Boolean situacao
 
 ) {

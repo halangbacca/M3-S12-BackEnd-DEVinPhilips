@@ -45,4 +45,7 @@ public class Exame {
     @Column(name = "SITUACAO")
     private Boolean situacao;
 
+    @Column(name = "LABORATORIO")
+    private String laboratorio;
+
 }

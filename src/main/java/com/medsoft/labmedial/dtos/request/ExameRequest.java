@@ -24,7 +24,9 @@ public record ExameRequest(
         @Size(min = 16, max = 1024)
         String resultado,
 
-        Long idPaciente
+        Long idPaciente,
+
+        String laboratorio
 
 ) {
 }
