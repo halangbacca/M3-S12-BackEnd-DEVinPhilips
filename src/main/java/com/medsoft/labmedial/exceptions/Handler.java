@@ -1,8 +1,10 @@
 package com.medsoft.labmedial.exceptions;
 
-import com.medsoft.labmedial.dtos.response.ExceptionsResponse;
+import com.medsoft.labmedial.dtos.response.ErrorObject;
+import com.medsoft.labmedial.dtos.response.ErrorResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,9 +13,79 @@ import java.util.List;
 
 @RestControllerAdvice
 public class Handler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<List<ExceptionsResponse>> trataErro400Constraints(MethodArgumentNotValidException exception) {
-        List<FieldError> erros = exception.getFieldErrors();
-        return ResponseEntity.badRequest().body(erros.stream().map(ExceptionsResponse::new).toList());
+    public ResponseEntity<ErrorResponse> trataErro400(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
     }
+
+    @ExceptionHandler(UsuarioExeception.class)
+    public ResponseEntity<ErrorResponse> trataErro403(Exception ex) {
+        HttpStatus codigo = HttpStatus.FORBIDDEN;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(PacienteNotFoundExeception.class)
+    public ResponseEntity<ErrorResponse> handlePacienteNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(DietaNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDietaNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(ConsultaNotFoundExeception.class)
+    public ResponseEntity<ErrorResponse> handleConsultaNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(EmpresaNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEmpresaNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(ExameNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleExameNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(ExercicioNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleExercicioNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    @ExceptionHandler(MedicamentoNotFoundExeception.class)
+    public ResponseEntity<ErrorResponse> handleMedicamentoNotFound(Exception ex) {
+        HttpStatus codigo = HttpStatus.BAD_REQUEST;
+        ErrorResponse error = new ErrorResponse(ex.getMessage(), codigo.value(), codigo.toString(), ex.getClass().getSimpleName(), null);
+        return ResponseEntity.status(codigo).body(error);
+    }
+
+    private ErrorResponse getErrorResponse(MethodArgumentNotValidException ex, HttpStatusCode status, List<ErrorObject> errors) {
+        return new ErrorResponse("Requisição possui Campo(s) Inválido(s)", status.value(),
+                status.toString(), ex.getBindingResult().getObjectName(), errors);
+    }
+
+    private List<ErrorObject> getErrors(MethodArgumentNotValidException ex) {
+        return ex.getBindingResult().getFieldErrors().stream()
+                .map(error -> new ErrorObject(error.getField(), error.getDefaultMessage(), error.getRejectedValue()))
+                .toList();
+    }
+
 }

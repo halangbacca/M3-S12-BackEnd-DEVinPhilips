@@ -13,27 +13,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/pacientes")
+@RequestMapping("api/pacientes")
+@CrossOrigin
 public class PacienteController {
     @Autowired
     private PacienteService service;
 
-    @PostMapping("/cadastrar")
-    public ResponseEntity<PacienteResponse> cadastrarPaciente( @Valid @RequestBody PacienteRequest request) {
+    @PostMapping()
+    public ResponseEntity<PacienteResponse> cadastrarPaciente( @Valid @RequestBody PacienteRequest request,
+                                                               @RequestHeader(value = "Authorization") String authorization) {
         Paciente paciente = new Paciente(request);
 
-        PacienteResponse novoPaciente = new PacienteResponse(service.cadastrarPaciente(paciente));
+        PacienteResponse novoPaciente = new PacienteResponse(service.cadastrarPaciente(paciente, authorization));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(novoPaciente);
     }
 
-    @GetMapping("/listar")
+    @GetMapping()
     public ResponseEntity<List<PacienteResponse>> listarPacientes() {
 
         List<PacienteResponse> pacienteResponse = service.listarPacientes()
                 .stream()
-                .map(paciente -> new PacienteResponse(paciente)).toList();
+                .map(PacienteResponse::new).toList();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pacienteResponse);
@@ -48,22 +50,24 @@ public class PacienteController {
                 .body(pacienteResponse);
     }
 
-    @DeleteMapping("/deletar/{id}")
-    public ResponseEntity<Object> deletarPorId(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PacienteResponse> deletarPorId(@PathVariable Long id,
+                                                         @RequestHeader(value = "Authorization") String authorization) {
 
-        if(service.deletarPorId(id)){
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
-        }
-        return null;
+        PacienteResponse pacienteResponse = new PacienteResponse(service.deletarPorId(id, authorization));
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(pacienteResponse);
     }
 
-    @PutMapping("/atualizar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PacienteResponse> atualizarPaciente(@PathVariable Long id,
-                                                              @Valid @RequestBody PacienteRequest request ){
+                                                              @Valid @RequestBody PacienteRequest request,
+                                                              @RequestHeader(value = "Authorization") String authorization){
 
         Paciente paciente = new Paciente(request);
 
-        PacienteResponse novoPaciente = new PacienteResponse(service.atualizarPaciente(id, paciente));
+        PacienteResponse novoPaciente = new PacienteResponse(service.atualizarPaciente(id, paciente, authorization));
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(novoPaciente);
